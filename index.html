@@ -3,154 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KJM442: IC Engine Learning Hub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>KJM442: Interactive P-V Simulator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .hero-section { background: #1a237e; color: white; padding: 60px 0; }
-        .card { margin-bottom: 20px; border-radius: 15px; }
-        .nav-link:hover { color: #ffca28 !important; }
-        #canvas-container { height: 400px; width: 100%; }
+        .container { max-width: 900px; margin-top: 30px; }
+        #piston-container { background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center; }
+        .canvas-container { position: relative; height: 300px; }
     </style>
 </head>
-<body>
+<body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand font-weight-bold" href="#">KJM442 Hub</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#notes">Notes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#lectures">Lectures</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#lab">Virtual Lab</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#exercises">Exercises</a></li>
-                </ul>
+<div class="container bg-white p-4 shadow rounded">
+    <h2 class="text-center text-primary">Simulator Piston vs Graf P-V</h2>
+    <hr>
+
+    <div class="row align-items-center">
+        <div class="col-md-5" id="piston-container">
+            <h5>Animasi Enjin</h5>
+            <svg width="150" height="250" viewBox="0 0 150 250">
+                <rect x="30" y="20" width="90" height="180" fill="none" stroke="#333" stroke-width="4"/>
+                <rect id="piston" x="35" y="100" width="80" height="50" rx="5" fill="#7f8c8d" />
+                <line id="rod" x1="75" y1="150" x2="75" y2="210" stroke="#34495e" stroke-width="6" />
+                <circle cx="75" cy="210" r="15" fill="none" stroke="#e74c3c" stroke-width="3" />
+            </svg>
+            <div class="mt-3">
+                <button class="btn btn-success btn-sm" onclick="startEngine()">Start</button>
+                <button class="btn btn-danger btn-sm" onclick="stopEngine()">Stop</button>
             </div>
         </div>
-    </nav>
 
-    <section class="hero-section text-center">
-        <div class="container">
-            <h1>Internal Combustion Engines</h1>
-            <p class="lead">Web-based Application for Electrical Engineering Students</p>
+        <div class="col-md-7">
+            <canvas id="pvChart"></canvas>
         </div>
-    </section>
-
-    <div class="container my-5">
-        <section id="notes" class="mb-5">
-            <h2 class="border-bottom pb-2">1. Study Notes</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card p-3 shadow-sm">
-                        <h5>Otto vs Diesel Cycle</h5>
-                        <p>Pelajar elektrik perlu faham bahawa Kitaran Otto adalah untuk enjin petrol (spark ignition), manakala Diesel adalah untuk compression ignition. Perbezaan utama adalah pada proses penambahan haba (Heat Addition).</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card p-3 shadow-sm">
-                        <h5>Piston & P-V Relationship</h5>
-                        <p>Apabila Piston bergerak ke atas (Compression), Isipadu (V) berkurang dan Tekanan (P) meningkat. Ini digambarkan dalam Graf P-V sebagai lengkung adiabatik.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="lectures" class="mb-5 bg-light p-4 rounded">
-            <h2 class="border-bottom pb-2">2. Video Lectures</h2>
-            <div class="ratio ratio-16x9 shadow">
-                <iframe src="https://www.youtube.com/embed/fTAUq6G9ne0" title="IC Engine Lecture" allowfullscreen></iframe>
-            </div>
-        </section>
-
-        <section id="lab" class="mb-5">
-            <h2 class="border-bottom pb-2">3. Virtual Lab: P-V Diagram Hub</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card p-4 bg-dark text-white">
-                        <h6>Simulation Controls</h6>
-                        <label>Compression Ratio (r): <span id="r-val">8</span></label>
-                        <input type="range" class="form-range" id="compRatio" min="5" max="22" step="1" value="8">
-                        
-                        <label class="mt-3">Engine Type:</label>
-                        <select class="form-select" id="engineType">
-                            <option value="otto">Otto (Petrol)</option>
-                            <option value="diesel">Diesel</option>
-                        </select>
-                        <button class="btn btn-warning mt-4" onclick="updateChart()">Simulate Cycle</button>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card p-3 shadow">
-                        <canvas id="pvChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="exercises" class="mb-5">
-            <h2 class="border-bottom pb-2">4. Quiz & Exercises</h2>
-            <div class="card p-4 shadow-sm border-left-primary">
-                <p><strong>Soalan 1:</strong> Apakah yang berlaku kepada kecekapan termal jika nisbah mampatan (r) ditingkatkan?</p>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="q1" id="q1a">
-                    <label class="form-check-label" for="q1a">Kecekapan Berkurang</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="q1" id="q1b">
-                    <label class="form-check-label" for="q1b">Kecekapan Meningkat</label>
-                </div>
-            </div>
-        </section>
     </div>
+</div>
 
-    <footer class="bg-dark text-white text-center py-4">
-        <p>FYP Project | KJM442 Heat and Fluids</p>
-    </footer>
+<script>
+    let animationId;
+    let angle = 0;
+    const ctx = document.getElementById('pvChart').getContext('2d');
 
-    <script>
-        let chart;
-        const ctx = document.getElementById('pvChart').getContext('2d');
+    // Data untuk lengkung P-V yang tetap (Ideal Otto Cycle)
+    const curveData = [];
+    for (let v = 1; v <= 10; v += 0.5) {
+        curveData.push({x: v, y: 100 / Math.pow(v, 1.4)});
+    }
 
-        function generateData(r, type) {
-            let data = [];
-            // Simulasi ringkas lengkung P-V (P = 1/V^1.4)
-            for (let v = 1; v <= r; v += 0.5) {
-                data.push({x: v, y: 100 / Math.pow(v, 1.4)});
-            }
-            return data;
-        }
-
-        function updateChart() {
-            const r = document.getElementById('compRatio').value;
-            document.getElementById('r-val').innerText = r;
-            const type = document.getElementById('engineType').value;
-            
-            const points = generateData(r, type);
-
-            if (chart) chart.destroy();
-            
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: `P-V Curve (${type.toUpperCase()})`,
-                        data: points,
-                        borderColor: '#fb8c00',
-                        fill: false,
-                        tension: 0.4
-                    }]
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: 'P-V Curve',
+                    data: curveData,
+                    borderColor: '#3498db',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.4
                 },
-                options: {
-                    scales: {
-                        x: { type: 'linear', title: { display: true, text: 'Volume (V)' } },
-                        y: { title: { display: true, text: 'Pressure (P)' } }
-                    }
+                {
+                    label: 'Current State',
+                    data: [{x: 5, y: 10}],
+                    backgroundColor: 'red',
+                    pointRadius: 8,
+                    showLine: false
                 }
-            });
+            ]
+        },
+        options: {
+            scales: {
+                x: { type: 'linear', title: { display: true, text: 'Volume (V)' }, min: 1, max: 10 },
+                y: { title: { display: true, text: 'Pressure (P)' }, min: 0, max: 110 }
+            }
         }
+    });
 
-        // Jalankan graf pertama kali
-        updateChart();
-    </script>
+    function animate() {
+        angle += 0.05;
+        
+        // Gerakan piston (Harmonic motion)
+        // y bervariasi antara 30 (Top Dead Center) dan 110 (Bottom Dead Center)
+        const yPos = 70 + Math.cos(angle) * 40; 
+        document.getElementById('piston').setAttribute('y', yPos);
+        
+        // Update Rod
+        document.getElementById('rod').setAttribute('y1', yPos + 50);
+
+        // Update Titik pada Graf
+        // Volume berkadar terus dengan yPos piston
+        const currentV = 1 + ((yPos - 30) / 80) * 9; 
+        const currentP = 100 / Math.pow(currentV, 1.4);
+
+        chart.data.datasets[1].data = [{x: currentV, y: currentP}];
+        chart.update('none'); // Update tanpa animasi chart supaya laju
+
+        animationId = requestAnimationFrame(animate);
+    }
+
+    function startEngine() { if (!animationId) animate(); }
+    function stopEngine() { cancelAnimationFrame(animationId); animationId = null; }
+</script>
+
 </body>
 </html>
