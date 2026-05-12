@@ -42,6 +42,7 @@
         .form-range::-webkit-slider-thumb { background: #0d47a1; border: 3px solid #fff; margin-top: -8px; width: 25px; height: 25px; cursor: pointer; box-shadow: 0 0 8px rgba(0,0,0,0.2); }
         
         .table-dark { background-color: #212529; }
+        .diagram-img { max-width: 100%; height: auto; border-radius: 10px; margin-top: 10px; }
         footer { background: #212529; color: white; padding: 50px 0; margin-top: 60px; }
     </style>
 </head>
@@ -116,22 +117,25 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="card h-100 p-4 border-top border-primary border-4 shadow-sm">
-                        <h5 class="text-primary fw-bold">Otto Process Stages</h5>
-                        <ul class="list-group list-group-flush small">
+                    <div class="card h-100 p-4 border-top border-primary border-4 shadow-sm text-center">
+                        <h5 class="text-primary fw-bold">Otto Cycle P-V Diagram</h5>
+                        <img src="otto_diagram.png" alt="Otto Cycle Diagram" class="diagram-img shadow-sm mb-3">
+                        <ul class="list-group list-group-flush text-start small">
                             <li class="list-group-item">1 $\rightarrow$ 2: Isentropic Compression</li>
-                            <li class="list-group-item">2 $\rightarrow$ 3: Constant Volume Heat Addition ($Q_{in}$)</li>
+                            <li class="list-group-item">2 $\rightarrow$ 3: <b>Constant Volume</b> Heat Addition ($Q_{in}$)</li>
                             <li class="list-group-item">3 $\rightarrow$ 4: Isentropic Expansion (Power)</li>
                             <li class="list-group-item">4 $\rightarrow$ 1: Constant Volume Heat Rejection ($Q_{out}$)</li>
                         </ul>
                     </div>
                 </div>
+
                 <div class="col-md-6">
-                    <div class="card h-100 p-4 border-top border-warning border-4 shadow-sm">
-                        <h5 class="text-warning fw-bold">Diesel Process Stages</h5>
-                        <ul class="list-group list-group-flush small">
+                    <div class="card h-100 p-4 border-top border-warning border-4 shadow-sm text-center">
+                        <h5 class="text-warning fw-bold">Diesel Cycle P-V Diagram</h5>
+                        <img src="diesel_diagram.png" alt="Diesel Cycle Diagram" class="diagram-img shadow-sm mb-3">
+                        <ul class="list-group list-group-flush text-start small">
                             <li class="list-group-item">1 $\rightarrow$ 2: Isentropic Compression</li>
-                            <li class="list-group-item">2 $\rightarrow$ 3: Constant Pressure Heat Addition ($Q_{in}$)</li>
+                            <li class="list-group-item">2 $\rightarrow$ 3: <b>Constant Pressure</b> Heat Addition ($Q_{in}$)</li>
                             <li class="list-group-item">3 $\rightarrow$ 4: Isentropic Expansion (Power)</li>
                             <li class="list-group-item">4 $\rightarrow$ 1: Constant Volume Heat Rejection ($Q_{out}$)</li>
                         </ul>
