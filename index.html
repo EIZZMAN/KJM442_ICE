@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +7,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .hero-section { background: #1a237e; color: white; padding: 60px 0; }
-        .card { margin-bottom: 20px; border-radius: 15px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hero-section { background: #0d47a1; color: white; padding: 60px 0; }
+        .engine-label { font-weight: bold; padding: 8px 20px; border-radius: 20px; color: white; display: inline-block; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .otto-bg { background-color: #007bff; }
+        .diesel-bg { background-color: #fd7e14; }
+        .card { border-radius: 15px; overflow: hidden; margin-bottom: 25px; border: none; }
         .nav-link:hover { color: #ffca28 !important; }
-        #piston-container { background: #f8f9fa; border-radius: 10px; padding: 20px; text-align: center; }
+        #piston-container { background: #ffffff; padding: 20px; text-align: center; border-right: 1px solid #eee; }
+        footer { background: #212529; color: white; padding: 30px 0; margin-top: 50px; }
     </style>
 </head>
-<body>
+<body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">KJM442 Hub</a>
+            <a class="navbar-brand fw-bold" href="#">KJM442: HEAT & FLUIDS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#notes">Notes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#notes">Study Notes</a></li>
                     <li class="nav-item"><a class="nav-link" href="#lectures">Lectures</a></li>
                     <li class="nav-item"><a class="nav-link" href="#lab">Virtual Lab</a></li>
                     <li class="nav-item"><a class="nav-link" href="#exercises">Exercises</a></li>
@@ -29,126 +37,177 @@
         </div>
     </nav>
 
-    <section class="hero-section text-center">
+    <header class="hero-section text-center shadow">
         <div class="container">
-            <h1>Internal Combustion Engines</h1>
-            <p class="lead">Web-based Application for Electrical Engineering Students</p>
+            <h1 class="display-4 fw-bold">Internal Combustion Engines</h1>
+            <p class="lead">Interactive Learning Module for Electrical Power Engineering Students</p>
         </div>
-    </section>
+    </header>
 
     <div class="container my-5">
+        
         <section id="notes" class="mb-5">
-            <h2 class="border-bottom pb-2 text-primary">1. Study Notes</h2>
-            <div class="row mt-3">
+            <h2 class="border-bottom pb-2 text-primary fw-bold">1. Fundamental Concepts</h2>
+            <div class="row g-4 mt-2">
                 <div class="col-md-6">
-                    <div class="card p-3 shadow-sm border-start border-primary border-4">
-                        <h5>Otto vs Diesel Cycle</h5>
-                        <p>Kitaran Otto (Petrol) melibatkan penambahan haba pada isipadu malar, manakala Diesel pada tekanan malar. Ini adalah konsep asas yang penting untuk pelajar Power Engineering.</p>
+                    <div class="card h-100 shadow-sm p-4 border-start border-primary border-5">
+                        <h4>Otto Cycle vs Diesel Cycle</h4>
+                        <p class="text-muted">The primary difference lies in the <strong>Heat Addition</strong> process. In an Otto cycle (Petrol), heat is added at a constant volume. In a Diesel cycle, heat is added at a constant pressure.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card p-3 shadow-sm border-start border-primary border-4">
-                        <h5>Piston & P-V Relationship</h5>
-                        <p>Apabila piston bergerak ke atas (Compression), isipadu berkurang dan tekanan meningkat secara mendadak mengikut hukum $PV^k = C$.</p>
+                    <div class="card h-100 shadow-sm p-4 border-start border-primary border-5">
+                        <h4>Compression Ratio ($r$)</h4>
+                        <p class="text-muted">Defined as the ratio of the maximum volume to the minimum volume in the cylinder. Diesel engines require higher ratios ($r \approx 14-22$) to achieve auto-ignition compared to Otto engines ($r \approx 7-10$).</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="lectures" class="mb-5 p-4 bg-light rounded shadow-sm">
-            <h2 class="border-bottom pb-2 text-primary">2. Video Lectures</h2>
-            <div class="ratio ratio-16x9 mt-3 shadow">
-                <iframe src="https://www.youtube.com/embed/fTAUq6G9ne0" title="IC Engine Lecture" allowfullscreen></iframe>
+        <section id="lectures" class="mb-5 bg-white p-4 rounded shadow-sm">
+            <h2 class="border-bottom pb-2 text-primary fw-bold">2. Video Lectures</h2>
+            <div class="ratio ratio-16x9 mt-4 shadow-sm rounded">
+                <iframe src="https://www.youtube.com/embed/fTAUq6G9ne0" title="IC Engine Working Principles" allowfullscreen></iframe>
             </div>
         </section>
 
         <section id="lab" class="mb-5">
-            <h2 class="border-bottom pb-2 text-primary">3. Virtual Lab: Interactive P-V Simulator</h2>
-            <div class="row align-items-center mt-4">
-                <div class="col-md-4" id="piston-container">
-                    <h6 class="mb-3">Engine Animation</h6>
-                    <svg width="120" height="220" viewBox="0 0 150 250">
-                        <rect x="30" y="20" width="90" height="180" fill="none" stroke="#333" stroke-width="4"/>
-                        <rect id="piston" x="35" y="100" width="80" height="50" rx="5" fill="#7f8c8d" />
-                        <line id="rod" x1="75" y1="150" x2="75" y2="210" stroke="#34495e" stroke-width="6" />
-                        <circle cx="75" cy="210" r="15" fill="none" stroke="#e74c3c" stroke-width="3" />
-                    </svg>
-                    <div class="mt-3">
-                        <button class="btn btn-success btn-sm w-100 mb-2" onclick="startEngine()">Start Engine</button>
-                        <button class="btn btn-danger btn-sm w-100" onclick="stopEngine()">Stop Engine</button>
-                    </div>
-                </div>
+            <h2 class="border-bottom pb-2 text-primary fw-bold">3. Virtual Lab: Thermodynamic Comparison</h2>
+            <p class="text-muted mb-4">Observe the relationship between Piston position and the P-V Diagram for both cycles simultaneously.</p>
 
-                <div class="col-md-8">
-                    <div class="card p-3 shadow-sm">
-                        <canvas id="pvChart"></canvas>
+            <div class="engine-label otto-bg">Otto Cycle (SI Engine)</div>
+            <div class="card shadow-sm border">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-4" id="piston-container">
+                        <h6 class="text-primary">Piston Animation (r=8)</h6>
+                        <svg width="120" height="220" viewBox="0 0 150 250">
+                            <rect x="30" y="20" width="90" height="180" fill="none" stroke="#333" stroke-width="4"/>
+                            <rect id="pistonOtto" x="35" y="100" width="80" height="50" rx="5" fill="#007bff" />
+                            <line id="rodOtto" x1="75" y1="150" x2="75" y2="210" stroke="#34495e" stroke-width="6" />
+                            <circle cx="75" cy="210" r="15" fill="none" stroke="#dc3545" stroke-width="3" />
+                        </svg>
+                    </div>
+                    <div class="col-md-8 p-3">
+                        <canvas id="chartOtto"></canvas>
                     </div>
                 </div>
+            </div>
+
+            <div class="engine-label diesel-bg mt-4">Diesel Cycle (CI Engine)</div>
+            <div class="card shadow-sm border">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-4" id="piston-container">
+                        <h6 class="text-warning">Piston Animation (r=18)</h6>
+                        <svg width="120" height="220" viewBox="0 0 150 250">
+                            <rect x="30" y="20" width="90" height="180" fill="none" stroke="#333" stroke-width="4"/>
+                            <rect id="pistonDiesel" x="35" y="120" width="80" height="50" rx="5" fill="#fd7e14" />
+                            <line id="rodDiesel" x1="75" y1="170" x2="75" y2="210" stroke="#34495e" stroke-width="6" />
+                            <circle cx="75" cy="210" r="15" fill="none" stroke="#dc3545" stroke-width="3" />
+                        </svg>
+                    </div>
+                    <div class="col-md-8 p-3">
+                        <canvas id="chartDiesel"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center my-4">
+                <button class="btn btn-primary btn-lg px-5 py-3 shadow" onclick="toggleEngines()" id="btnControl">START SIMULATION</button>
             </div>
         </section>
 
         <section id="exercises" class="mb-5">
-            <h2 class="border-bottom pb-2 text-primary">4. Quiz & Exercises</h2>
-            <div class="card p-4 shadow-sm">
-                <p><strong>Soalan:</strong> Apakah fasa yang berlaku apabila titik merah berada pada puncak tertinggi graf P-V?</p>
-                <div class="form-check">
+            <h2 class="border-bottom pb-2 text-primary fw-bold">4. Exercises</h2>
+            <div class="card shadow-sm p-4">
+                <p class="fw-bold">Q1: Which cycle typically operates at a higher compression ratio?</p>
+                <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" name="q1" id="q1a">
-                    <label class="form-check-label" for="q1a">Intake (Kemasukan)</label>
+                    <label class="form-check-label" for="q1a">Otto Cycle</label>
                 </div>
-                <div class="form-check">
+                <div class="form-check mb-3">
                     <input class="form-check-input" type="radio" name="q1" id="q1b">
-                    <label class="form-check-label" for="q1b">Compression (Mampatan)</label>
+                    <label class="form-check-label" for="q1b">Diesel Cycle</label>
                 </div>
+                <button class="btn btn-outline-primary btn-sm w-25">Submit Answer</button>
             </div>
         </section>
+
     </div>
 
-    <footer class="bg-dark text-white text-center py-4">
-        <p>FYP Project | Web-based Hub for KJM442</p>
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-1">Final Year Project | Bachelor of Electrical Engineering (Power)</p>
+            <p class="text-muted small">© 2026 Web-based Application for KJM442</p>
+        </div>
     </footer>
 
     <script>
         let animationId;
         let angle = 0;
-        const ctx = document.getElementById('pvChart').getContext('2d');
+        let isRunning = false;
 
-        const curveData = [];
-        for (let v = 1; v <= 10; v += 0.5) {
-            curveData.push({x: v, y: 100 / Math.pow(v, 1.4)});
+        function createChart(canvasId, label, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const curve = [];
+            for (let v = 1; v <= 10; v += 0.2) {
+                curve.push({x: v, y: 100 / Math.pow(v, 1.4)});
+            }
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        { label: label + ' Theoretical Curve', data: curve, borderColor: color, borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
+                        { label: 'Current Cycle State', data: [{x: 5, y: 10}], backgroundColor: '#dc3545', pointRadius: 7, showLine: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { type: 'linear', title: { display: true, text: 'Volume (V)' }, min: 0.5, max: 10.5 },
+                        y: { title: { display: true, text: 'Pressure (P)' }, min: 0, max: 120 }
+                    }
+                }
+            });
         }
 
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [
-                    { label: 'P-V Curve', data: curveData, borderColor: '#3498db', borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-                    { label: 'Live State', data: [{x: 5, y: 10}], backgroundColor: 'red', pointRadius: 8, showLine: false }
-                ]
-            },
-            options: {
-                scales: {
-                    x: { type: 'linear', title: { display: true, text: 'Volume (V)' }, min: 1, max: 10 },
-                    y: { title: { display: true, text: 'Pressure (P)' }, min: 0, max: 110 }
-                }
-            }
-        });
+        const chartOtto = createChart('chartOtto', 'Otto', '#007bff');
+        const chartDiesel = createChart('chartDiesel', 'Diesel', '#fd7e14');
 
         function animate() {
             angle += 0.05;
-            const yPos = 70 + Math.cos(angle) * 40; 
-            document.getElementById('piston').setAttribute('y', yPos);
-            document.getElementById('rod').setAttribute('y1', yPos + 50);
+            
+            // Update Otto (Standard Stroke)
+            const yOtto = 70 + Math.cos(angle) * 40; 
+            document.getElementById('pistonOtto').setAttribute('y', yOtto);
+            document.getElementById('rodOtto').setAttribute('y1', yOtto + 50);
+            const vOtto = 1 + ((yOtto - 30) / 80) * 8; 
+            chartOtto.data.datasets[1].data = [{x: vOtto, y: 100 / Math.pow(vOtto, 1.4)}];
+            chartOtto.update('none');
 
-            const currentV = 1 + ((yPos - 30) / 80) * 9; 
-            const currentP = 100 / Math.pow(currentV, 1.4);
+            // Update Diesel (Higher Stroke/Compression)
+            const yDiesel = 60 + Math.cos(angle) * 50; 
+            document.getElementById('pistonDiesel').setAttribute('y', yDiesel);
+            document.getElementById('rodDiesel').setAttribute('y1', yDiesel + 50);
+            const vDiesel = 0.8 + ((yDiesel - 10) / 100) * 9.2; 
+            chartDiesel.data.datasets[1].data = [{x: vDiesel, y: 110 / Math.pow(vDiesel, 1.5)}];
+            chartDiesel.update('none');
 
-            chart.data.datasets[1].data = [{x: currentV, y: currentP}];
-            chart.update('none');
             animationId = requestAnimationFrame(animate);
         }
 
-        function startEngine() { if (!animationId) animate(); }
-        function stopEngine() { cancelAnimationFrame(animationId); animationId = null; }
+        function toggleEngines() {
+            if (!isRunning) {
+                animate();
+                document.getElementById('btnControl').innerText = "STOP SIMULATION";
+                document.getElementById('btnControl').className = "btn btn-danger btn-lg px-5 shadow";
+                isRunning = true;
+            } else {
+                cancelAnimationFrame(animationId);
+                document.getElementById('btnControl').innerText = "START SIMULATION";
+                document.getElementById('btnControl').className = "btn btn-primary btn-lg px-5 shadow";
+                isRunning = false;
+            }
+        }
     </script>
 </body>
 </html>
