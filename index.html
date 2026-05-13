@@ -2,380 +2,1082 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KJM442: Advanced IC Engine Simulation Hub</title>
-    
-    <!-- Bootstrap & Chart.js -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KJM442 | HeatMaster Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- MathJax for LaTeX Equations -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$']]
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; scroll-behavior: smooth; background-color: #f4f7f6; }
-        .hero-section { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); color: white; padding: 60px 0; }
-        .card { border-radius: 15px; margin-bottom: 25px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=JetBrains+Mono&display=swap');
         
-        /* High-Visibility Sliders */
-        .input-panel { 
-            background: #ffffff; 
-            border-radius: 15px; 
-            padding: 25px; 
-            margin-bottom: 30px; 
-            border: 2px solid #0d47a1;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        :root {
+            --primary: #f97316;
+            --secondary: #0f172a;
         }
-        .slider-box { background: #e9ecef; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #dee2e6; }
-        
-        .chart-container {
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        @media (min-width: 768px) {
+            body { padding-bottom: 0; }
+        }
+
+        .premium-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             position: relative;
-            height: 350px;
+            overflow: hidden;
+        }
+        .header-pattern {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(249, 115, 22, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
+        .logo-box {
+            background: linear-gradient(45deg, #f97316, #fb923c);
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-item-active {
+            color: var(--primary) !important;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .nav-item-active::after {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 20px;
+                height: 3px;
+                background: var(--primary);
+                border-radius: 2px;
+            }
+        }
+
+        .engineering-font { font-family: 'JetBrains Mono', monospace; }
+
+        @keyframes atomVibrate {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, 1px); }
+        }
+        .atom-hot { animation: atomVibrate 0.1s infinite; fill: #ef4444; }
+        .atom-warm { animation: atomVibrate 0.2s infinite; fill: #fb923c; }
+        .atom-cold { animation: atomVibrate 0.4s infinite; fill: #3b82f6; }
+
+        @keyframes convectionFlow {
+            0% { transform: translate(0, 0); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(0, -60px); opacity: 0; }
+        }
+        .fluid-particle { animation: convectionFlow 3s linear infinite; }
+
+        @keyframes radiationWave {
+            0% { transform: scale(1); opacity: 0.8; stroke-width: 2; }
+            100% { transform: scale(2.5); opacity: 0; stroke-width: 1; }
+        }
+        .wave-ring { transform-origin: center; animation: radiationWave 2s ease-out infinite; }
+
+        input[type=range] { accent-color: #f97316; }
+
+        .note-tab-active {
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            color: #f97316;
+        }
+
+        #three-container {
             width: 100%;
-            background: white;
-            border-radius: 10px;
-            padding: 10px;
+            height: 100%;
+            cursor: grab;
+            touch-action: none;
+        }
+        #three-container:active { cursor: grabbing; }
+
+        .circuit-segment {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .resistor-line {
+            height: 2px;
+            background: #94a3b8;
+            flex-grow: 1;
+        }
+        .resistor-symbol {
+            width: 50px;
+            height: 25px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cpath d='M0 10 L5 10 L8 5 L12 15 L16 5 L20 15 L24 5 L28 15 L32 10 L40 10' fill='none' stroke='%23f97316' stroke-width='2'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            flex-shrink: 0;
+        }
+        .node-circle {
+            width: 12px;
+            height: 12px;
+            background: #475569;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+        .node-label {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 800;
         }
 
-        .engine-viz {
-            background: #2c3e50;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
+        .quiz-option {
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+            touch-action: manipulation;
         }
-
-        footer { background: #212529; color: white; padding: 40px 0; margin-top: 60px; }
-        .badge-otto { background-color: #007bff; }
-        .badge-diesel { background-color: #fd7e14; }
+        .quiz-option:hover {
+            border-color: #f97316;
+            background-color: #fff7ed;
+        }
+        .quiz-option.selected {
+            border-color: #f97316;
+            background-color: #ffedd5;
+        }
     </style>
 </head>
-<body>
+<body class="text-slate-900">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">KJM442: THERMODYNAMICS HUB</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#notes">Study Notes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#lab">Virtual Lab</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#exercises">Exercises</a></li>
-                </ul>
+    <!-- TOP HEADER -->
+    <header class="premium-header py-6 md:py-8 border-b border-orange-500/20">
+        <div class="header-pattern"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-5">
+                <div class="logo-box w-16 h-16 rounded-2xl flex items-center justify-center rotate-3 transform hover:rotate-0 transition-transform duration-300">
+                    <span class="text-white text-3xl font-black italic tracking-tighter">KJM</span>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">KJM442 <span class="text-orange-500">HEAT AND FLUID</span></h1>
+                    <p class="text-slate-400 text-xs md:text-sm font-bold tracking-widest uppercase mt-1">Advanced Thermal Science Learning Platform</p>
+                    
+                    <!-- CHAPTER SELECTOR -->
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="switchChapter(1)" id="btn-ch1" class="px-4 py-1.5 rounded-xl bg-orange-600 text-white text-[10px] font-black shadow-lg tracking-widest uppercase transition-all">CH 1: Heat Transfer</button>
+                        <button onclick="switchChapter(2)" id="btn-ch2" class="px-4 py-1.5 rounded-xl bg-white/10 text-white hover:bg-white/20 text-[10px] font-black transition-all tracking-widest uppercase">CH 2: Fluid Mechanics</button>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden lg:flex gap-10">
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Academic Session</span>
+                    <span class="text-white font-black">2024 / 2025</span>
+                </div>
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Status</span>
+                    <span class="flex items-center gap-2 text-emerald-400 font-black">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE SIMULATOR
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION DESKTOP -->
+    <nav class="bg-white/90 sticky top-0 z-50 border-b border-slate-200 hidden md:block backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="bg-orange-600 w-10 h-10 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-fire-flame-curved text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-slate-800">HeatMaster <span class="text-orange-600">PRO</span></h1>
+                </div>
+                <div class="flex space-x-8 h-full items-center">
+                    <button onclick="showSection('notes')" id="nav-notes-desktop" class="nav-btn-desktop font-bold transition-all nav-item-active text-orange-600 uppercase">Notes</button>
+                    <button onclick="showSection('lectures')" id="nav-lectures-desktop" class="nav-btn-desktop font-bold text-slate-400 hover:text-slate-600 transition-all uppercase">Lectures</button>
+                    <button onclick="showSection('lab')" id="nav-lab-desktop" class="nav-btn-desktop font-bold text-slate-400 hover:text-slate-600 transition-all uppercase">Lab</button>
+                    <button onclick="showSection('exercise')" id="nav-exercise-desktop" class="nav-btn-desktop font-bold text-slate-400 hover:text-slate-600 transition-all uppercase">Exercises</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <header class="hero-section text-center">
-        <div class="container">
-            <h1 class="display-4 fw-bold">Internal Combustion Engines</h1>
-            <p class="lead">Interactive P-V Diagram & Cycle Analysis Simulation</p>
+    <!-- NAVIGATION MOBILE -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 md:hidden pb-safe shadow-2xl">
+        <div class="flex justify-around items-center h-16">
+            <button onclick="showSection('notes')" id="nav-notes-mobile" class="nav-btn-mobile flex-1 flex flex-col items-center gap-1 text-orange-600 nav-item-active">
+                <i class="fa-solid fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold">Notes</span>
+            </button>
+            <button onclick="showSection('lectures')" id="nav-lectures-mobile" class="nav-btn-mobile flex-1 flex flex-col items-center gap-1 text-slate-400">
+                <i class="fa-solid fa-video text-lg"></i>
+                <span class="text-[10px] font-bold">Lectures</span>
+            </button>
+            <button onclick="showSection('lab')" id="nav-lab-mobile" class="nav-btn-mobile flex-1 flex flex-col items-center gap-1 text-slate-400">
+                <i class="fa-solid fa-flask text-lg"></i>
+                <span class="text-[10px] font-bold">Lab</span>
+            </button>
+            <button onclick="showSection('exercise')" id="nav-exercise-mobile" class="nav-btn-mobile flex-1 flex flex-col items-center gap-1 text-slate-400">
+                <i class="fa-solid fa-pen-to-square text-lg"></i>
+                <span class="text-[10px] font-bold">Exercise</span>
+            </button>
         </div>
-    </header>
+    </nav>
 
-    <div class="container my-5">
+    <main class="max-w-7xl mx-auto px-4 py-6 md:py-12">
         
-        <!-- SECTION 1: STUDY NOTES -->
-        <section id="notes" class="mb-5">
-            <h2 class="border-bottom pb-2 text-primary fw-bold mb-4">1. Thermodynamic Cycle Principles</h2>
-            
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="card shadow p-4 border-start border-primary border-5">
-                        <h4 class="fw-bold">Process Identification</h4>
-                        <p>In an ideal cycle, we assume <strong>Air-Standard</strong> conditions where the working fluid is air behaving as an ideal gas.</p>
-                        <div class="row text-center">
-                            <div class="col-md-3 p-2"><div class="p-3 border rounded bg-light"><strong>1 $\rightarrow$ 2</strong><br>Isentropic Compression<br><small>$PV^\gamma = C$</small></div></div>
-                            <div class="col-md-3 p-2"><div class="p-3 border rounded bg-light"><strong>2 $\rightarrow$ 3</strong><br>Heat Addition<br><small>Otto: $V=C$ | Diesel: $P=C$</small></div></div>
-                            <div class="col-md-3 p-2"><div class="p-3 border rounded bg-light"><strong>3 $\rightarrow$ 4</strong><br>Isentropic Expansion<br><small>$PV^\gamma = C$</small></div></div>
-                            <div class="col-md-3 p-2"><div class="p-3 border rounded bg-light"><strong>4 $\rightarrow$ 1</strong><br>Heat Rejection<br><small>$V=C$</small></div></div>
+        <!-- SECTION: NOTES -->
+        <section id="section-notes" class="content-section">
+            <!-- CHAPTER 1 CONTENT -->
+            <div class="chapter-content ch1-content">
+            <div class="mb-8 text-center md:text-left">
+                <span class="text-orange-600 font-bold tracking-widest text-[10px] md:text-xs uppercase">Heat Transfer Mechanisms</span>
+                <h2 class="text-2xl md:text-4xl font-black mt-1 md:mt-2 text-slate-800">Modes of Heat Transfer</h2>
+                
+                <div class="mt-6 flex bg-slate-200/50 p-1 rounded-2xl w-full max-w-lg mx-auto md:mx-0">
+                    <button onclick="showNoteTab('conduction')" id="tab-btn-conduction" class="flex-1 py-2 text-xs font-extrabold rounded-xl transition-all note-tab-active">CONDUCTION</button>
+                    <button onclick="showNoteTab('convection')" id="tab-btn-convection" class="flex-1 py-2 text-xs font-extrabold rounded-xl transition-all text-slate-500">CONVECTION</button>
+                    <button onclick="showNoteTab('radiation')" id="tab-btn-radiation" class="flex-1 py-2 text-xs font-extrabold rounded-xl transition-all text-slate-500">RADIATION</button>
+                </div>
+            </div>
+
+            <div id="note-conduction" class="note-tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="glass-card overflow-hidden bg-slate-900 p-8 h-80 flex items-center justify-center relative">
+                        <svg viewBox="0 0 400 200" class="w-full h-full">
+                            <rect x="50" y="70" width="300" height="60" rx="10" fill="#334155" />
+                            <g id="atoms-grid">
+                                <circle class="atom-hot" cx="80" cy="85" r="8" />
+                                <circle class="atom-hot" cx="80" cy="115" r="8" />
+                                <circle class="atom-hot" cx="110" cy="85" r="8" />
+                                <circle class="atom-hot" cx="110" cy="115" r="8" />
+                                <circle class="atom-warm" cx="140" cy="85" r="8" />
+                                <circle class="atom-warm" cx="140" cy="115" r="8" />
+                                <circle class="atom-warm" cx="170" cy="85" r="8" />
+                                <circle class="atom-warm" cx="170" cy="115" r="8" />
+                                <circle class="atom-warm" cx="200" cy="85" r="8" />
+                                <circle class="atom-warm" cx="200" cy="115" r="8" />
+                                <circle class="atom-cold" cx="230" cy="85" r="8" />
+                                <circle class="atom-cold" cx="230" cy="115" r="8" />
+                                <circle class="atom-cold" cx="260" cy="85" r="8" />
+                                <circle class="atom-cold" cx="260" cy="115" r="8" />
+                                <circle class="atom-cold" cx="290" cy="85" r="8" />
+                                <circle class="atom-cold" cx="290" cy="115" r="8" />
+                                <circle class="atom-cold" cx="320" cy="85" r="8" />
+                                <circle class="atom-cold" cx="320" cy="115" r="8" />
+                            </g>
+                            <text x="65" y="160" fill="white" font-weight="bold" font-size="12">HOT END</text>
+                            <text x="260" y="160" fill="white" font-weight="bold" font-size="12">COLD END</text>
+                        </svg>
+                    </div>
+                    <div class="space-y-6">
+                        <h3 class="text-3xl font-bold text-slate-800">Thermal Conduction</h3>
+                        <p class="text-slate-600 leading-relaxed">Conduction is the transfer of energy from more energetic particles to less energetic ones as a result of interaction between particles.</p>
+                        <div class="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-2xl">
+                            <h4 class="font-bold text-orange-900 mb-2 italic">Fourier's Law:</h4>
+                            <p class="engineering-font text-xl text-orange-600 font-black">Q = -k A (dT/dx)</p>
+                            <p class="text-xs text-orange-700 mt-2 font-semibold">k = thermal conductivity (W/m.K)</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div id="note-convection" class="note-tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="glass-card overflow-hidden bg-slate-900 p-8 h-80 flex items-center justify-center relative">
+                        <svg viewBox="0 0 400 200" class="w-full h-full">
+                            <rect x="50" y="150" width="300" height="10" rx="2" fill="#94a3b8" />
+                            <text x="160" y="180" fill="white" font-weight="bold" font-size="12">HOT SURFACE</text>
+                            <g>
+                                <circle class="fluid-particle" cx="100" cy="140" r="4" fill="#ef4444" style="animation-delay: 0s;"/>
+                                <circle class="fluid-particle" cx="150" cy="140" r="4" fill="#ef4444" style="animation-delay: 0.5s;"/>
+                                <circle class="fluid-particle" cx="200" cy="140" r="4" fill="#ef4444" style="animation-delay: 1.2s;"/>
+                                <circle class="fluid-particle" cx="250" cy="140" r="4" fill="#ef4444" style="animation-delay: 0.8s;"/>
+                                <circle class="fluid-particle" cx="300" cy="140" r="4" fill="#ef4444" style="animation-delay: 1.5s;"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="space-y-6">
+                        <h3 class="text-3xl font-bold text-slate-800">Thermal Convection</h3>
+                        <p class="text-slate-600 leading-relaxed">Convection occurs between a solid surface and an adjacent fluid that is in motion.</p>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-2xl">
+                            <h4 class="font-bold text-blue-900 mb-2 italic">Newton's Law of Cooling:</h4>
+                            <p class="engineering-font text-xl text-blue-600 font-black">Q = h A (T<sub>s</sub> - T<sub>∞</sub>)</p>
+                            <p class="text-xs text-blue-700 mt-2 font-semibold">h = convection heat transfer coefficient (W/m².K)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="note-radiation" class="note-tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="glass-card overflow-hidden bg-slate-900 p-8 h-80 flex items-center justify-center relative">
+                        <svg viewBox="0 0 400 200" class="w-full h-full">
+                            <circle cx="200" cy="100" r="30" fill="#f97316" class="animate-pulse" />
+                            <circle cx="200" cy="100" r="35" stroke="#fb923c" stroke-width="2" fill="none" class="wave-ring" />
+                            <text x="175" y="105" fill="white" font-weight="bold" font-size="10">SOURCE</text>
+                        </svg>
+                    </div>
+                    <div class="space-y-6">
+                        <h3 class="text-3xl font-bold text-slate-800">Thermal Radiation</h3>
+                        <p class="text-slate-600 leading-relaxed">Radiation is energy emitted by matter in the form of electromagnetic waves.</p>
+                        <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-r-2xl">
+                            <h4 class="font-bold text-purple-900 mb-2 italic">Stefan-Boltzmann Law:</h4>
+                            <p class="engineering-font text-xl text-purple-600 font-black">Q = ε σ A T<sub>s</sub>⁴</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- CLOSE CH1 CONTENT -->
+
+            <!-- CHAPTER 2 CONTENT -->
+            <div class="chapter-content ch2-content hidden">
+                <div class="text-center py-24">
+                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
+                        <i class="fa-solid fa-water text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Fluid Mechanics Notes</h2>
+                    <p class="text-slate-500 font-medium max-w-md mx-auto">This chapter is currently under development. Interactive fluid visualizations will be available soon.</p>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 2: VIRTUAL LAB (DYNAMICAL P-V DIAGRAMS) -->
-        <section id="lab" class="mb-5">
-            <h2 class="border-bottom pb-2 text-primary fw-bold mb-4">2. Interactive Virtual Lab</h2>
-            
-            <div class="input-panel text-center">
-                <h5 class="mb-4 fw-bold">CONTROL PARAMETERS</h5>
-                <div class="row g-3 justify-content-center">
-                    <div class="col-md-4">
-                        <div class="slider-box">
-                            <label class="form-label fw-bold small text-uppercase">Compression Ratio ($r$): <span id="rDisp" class="text-primary">12</span></label>
-                            <input type="range" class="form-range" id="paramR" min="6" max="20" step="0.5" value="12" oninput="updateSim()">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="slider-box">
-                            <label class="form-label fw-bold small text-uppercase">Cut-off Ratio ($\rho$ - Diesel): <span id="rhoDisp" class="text-primary">2.0</span></label>
-                            <input type="range" class="form-range" id="paramRho" min="1.1" max="3" step="0.1" value="2.0" oninput="updateSim()">
-                        </div>
-                    </div>
+        <!-- SECTION: LAB -->
+        <section id="section-lab" class="content-section hidden">
+            <!-- CHAPTER 1 CONTENT -->
+            <div class="chapter-content ch1-content">
+            <div class="mb-6 md:mb-10 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <span class="text-orange-600 font-bold tracking-widest text-[10px] md:text-xs uppercase">Thermal Lab Simulator</span>
+                    <h2 class="text-2xl md:text-4xl font-black mt-1 text-slate-800">Conduction Experiment</h2>
                 </div>
-                <button class="btn btn-primary btn-lg mt-3 px-5 shadow-sm fw-bold" onclick="toggleEngine()" id="btnRun">START SIMULATION</button>
+                <div class="flex bg-slate-200 p-1 rounded-xl w-full md:w-auto">
+                    <button id="btn-geo-flat" onclick="switchGeometry('flat')" class="flex-1 md:flex-none px-6 py-2 text-xs font-bold bg-white shadow-sm transition-all uppercase">Plane Wall</button>
+                    <button id="btn-geo-cyl" onclick="switchGeometry('cyl')" class="flex-1 md:flex-none px-6 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all uppercase">Cylinder</button>
+                </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Otto Cycle -->
-                <div class="col-lg-6">
-                    <div class="card shadow">
-                        <div class="card-header bg-primary text-white d-flex justify-content-between">
-                            <span class="fw-bold">OTTO CYCLE (Petrol)</span>
-                            <span id="ottoEff" class="fw-bold">$\eta$ = --</span>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-sm font-bold text-slate-800 mb-6 border-b pb-2 uppercase tracking-widest">Boundary Conditions</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Hot Temp (T₁)</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="input-thot" value="100" class="w-16 bg-slate-100 border-none rounded px-2 py-0.5 text-xs font-black text-orange-600 focus:ring-1 focus:ring-orange-500" oninput="syncTemp('thot', this.value)">
+                                        <span class="text-xs font-bold text-slate-400">°C</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="sim-thot" min="30" max="300" value="100" oninput="syncTemp('thot', this.value)" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Cold Temp (T₂)</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="input-tcold" value="25" class="w-16 bg-slate-100 border-none rounded px-2 py-0.5 text-xs font-black text-blue-600 focus:ring-1 focus:ring-blue-500" oninput="syncTemp('tcold', this.value)">
+                                        <span class="text-xs font-bold text-slate-400">°C</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="sim-tcold" min="0" max="50" value="25" oninput="syncTemp('tcold', this.value)" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="engine-viz text-center">
-                                <svg width="120" height="180" viewBox="0 0 150 250">
-                                    <rect x="30" y="20" width="90" height="180" fill="none" stroke="#ecf0f1" stroke-width="4"/>
-                                    <rect id="pistonO" x="35" y="100" width="80" height="40" rx="5" fill="#3498db" />
-                                    <circle id="crankO" cx="75" cy="210" r="30" fill="none" stroke="#bdc3c7" stroke-width="2" stroke-dasharray="4" />
-                                    <line id="rodO" x1="75" y1="140" x2="75" y2="210" stroke="#ecf0f1" stroke-width="6" />
-                                </svg>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="canvasOtto"></canvas>
-                            </div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest">Material Layers</h3>
+                            <button onclick="addLayer()" class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full font-bold hover:bg-orange-700 transition-colors">+ ADD LAYER</button>
+                        </div>
+                        <div id="layers-container" class="space-y-4 max-h-[400px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="glass-card p-6 bg-slate-50 border-dashed border-2 border-slate-200 overflow-x-auto">
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">Thermal Circuit Representation</h3>
+                        <div id="thermal-circuit" class="flex items-center justify-center px-4 py-8 min-w-[500px]"></div>
+                    </div>
+
+                    <div class="glass-card p-0 h-[350px] md:h-[450px] overflow-hidden relative border border-slate-200 bg-slate-900 shadow-xl">
+                        <div id="three-container"></div>
+                        <div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 pointer-events-none">
+                            <span class="text-[10px] text-white/70 font-bold uppercase tracking-wider block" id="viz-title">3D Visualization</span>
+                            <span class="text-[9px] text-orange-400 font-mono italic">Drag to Rotate</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 h-80">
+                        <canvas id="labChart"></canvas>
+                    </div>
+                    <div class="bg-slate-900 rounded-[32px] p-8 text-white grid grid-cols-2 md:grid-cols-3 gap-6 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-blue-500"></div>
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Total Resistance (ΣRt)</span>
+                            <p id="res-rt" class="text-2xl font-black engineering-font text-emerald-400">0.0000</p>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase">K/W</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Heat Rate (Q)</span>
+                            <p id="res-q" class="text-2xl font-black engineering-font text-orange-400">0.0</p>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase">WATT</span>
+                        </div>
+                        <div class="text-center col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-slate-700 pt-4 md:pt-0">
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block mb-1">Heat Flux (q")</span>
+                            <p id="res-flux" class="text-2xl font-black engineering-font text-blue-400">0.0</p>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase">W/m²</span>
                         </div>
                     </div>
                 </div>
+            </div>
+            </div> <!-- CLOSE CH1 CONTENT -->
 
-                <!-- Diesel Cycle -->
-                <div class="col-lg-6">
-                    <div class="card shadow">
-                        <div class="card-header bg-warning text-dark d-flex justify-content-between">
-                            <span class="fw-bold">DIESEL CYCLE (Heavy Duty)</span>
-                            <span id="dieselEff" class="fw-bold">$\eta$ = --</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="engine-viz text-center">
-                                <svg width="120" height="180" viewBox="0 0 150 250">
-                                    <rect x="30" y="20" width="90" height="180" fill="none" stroke="#ecf0f1" stroke-width="4"/>
-                                    <rect id="pistonD" x="35" y="100" width="80" height="40" rx="5" fill="#e67e22" />
-                                    <circle id="crankD" cx="75" cy="210" r="30" fill="none" stroke="#bdc3c7" stroke-width="2" stroke-dasharray="4" />
-                                    <line id="rodD" x1="75" y1="140" x2="75" y2="210" stroke="#ecf0f1" stroke-width="6" />
-                                </svg>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="canvasDiesel"></canvas>
-                            </div>
-                        </div>
+            <!-- CHAPTER 2 CONTENT -->
+            <div class="chapter-content ch2-content hidden">
+                <div class="text-center py-24">
+                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
+                        <i class="fa-solid fa-flask-vial text-5xl"></i>
                     </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Fluid Dynamics Lab</h2>
+                    <p class="text-slate-500 font-medium max-w-md mx-auto">The Bernoulli and Pipe Friction simulators are being prepared.</p>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 3: EXERCISES -->
-        <section id="exercises">
-            <h2 class="border-bottom pb-2 text-primary fw-bold mb-4">3. Check Your Understanding</h2>
-            <div class="card shadow-sm p-4">
-                <p class="fw-bold">Question: If the Compression Ratio ($r$) is increased, why does the efficiency ($\eta$) also increase?</p>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="ex" id="ex1">
-                    <label class="form-check-label" for="ex1">The temperature at the end of compression is higher, leading to better combustion.</label>
+        <!-- SECTION: LECTURES -->
+        <section id="section-lectures" class="content-section hidden">
+            <!-- CHAPTER 1 CONTENT -->
+            <div class="chapter-content ch1-content">
+            <div class="mb-10">
+                <span class="text-orange-600 font-bold tracking-widest text-[10px] md:text-xs uppercase">Learning Content</span>
+                <h2 class="text-2xl md:text-4xl font-black mt-1 text-slate-800">Lecture Recordings</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl">
+                    <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/kNZi12OV9Xc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="px-2">
+                        <span class="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Core Topic</span>
+                        <h3 class="font-bold text-lg text-slate-800">Introduction to Heat Transfer</h3>
+                    </div>
                 </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="radio" name="ex" id="ex2">
-                    <label class="form-check-label" for="ex2">The expansion stroke extracts more work from the same amount of fuel.</label>
+                <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl">
+                    <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/rBGP-dNq9kU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="px-2">
+                        <span class="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Lecture 02</span>
+                        <h3 class="font-bold text-lg text-slate-800">Conduction Analysis</h3>
+                    </div>
                 </div>
-                <button class="btn btn-dark" onclick="checkAnswer()">Check Answer</button>
+                <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl">
+                    <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/ZS9swr6Y_TA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="px-2">
+                        <span class="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Lecture 03</span>
+                        <h3 class="font-bold text-lg text-slate-800">Basics of Convection</h3>
+                    </div>
+                </div>
+                <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl border-2 border-orange-500/20">
+                    <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                         <iframe class="w-full h-full" src="https://www.youtube.com/embed/8WDPORGeKK8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="px-2">
+                        <span class="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Advanced Topic</span>
+                        <h3 class="font-bold text-lg text-slate-800">Extended Surface Heat Transfer (Fins)</h3>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- CLOSE CH1 CONTENT -->
+
+            <!-- CHAPTER 2 CONTENT -->
+            <div class="chapter-content ch2-content hidden">
+                <div class="text-center py-24">
+                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
+                        <i class="fa-solid fa-video text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Chapter 2 Lectures</h2>
+                    <p class="text-slate-500 font-medium max-w-md mx-auto">Lecture recordings for Fluid Mechanics will be uploaded soon.</p>
+                </div>
             </div>
         </section>
-    </div>
 
-    <footer class="text-center">
-        <div class="container">
-            <p class="mb-1 fw-bold">KJM442: Advanced IC Engine Simulator</p>
-            <p class="text-muted small">UiTM Faculty of Electrical Engineering | Educational Tool</p>
-        </div>
-    </footer>
+        <!-- SECTION: EXERCISE -->
+        <section id="section-exercise" class="content-section hidden">
+            <!-- CHAPTER 1 CONTENT -->
+            <div class="chapter-content ch1-content">
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="glass-card p-8 min-h-[600px] flex flex-col shadow-2xl relative overflow-hidden">
+                    <!-- Background Decoration -->
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-orange-50 rounded-full opacity-50"></div>
+                    
+                    <!-- Quiz Start Screen -->
+                    <div id="quiz-start-screen" class="text-center my-auto relative z-10">
+                        <div class="w-24 h-24 bg-orange-100 text-orange-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform -rotate-6">
+                            <i class="fa-solid fa-graduation-cap text-5xl"></i>
+                        </div>
+                        <h2 class="text-4xl font-black text-slate-800 mb-4 tracking-tight">Thermal Technical Quiz</h2>
+                        <p class="text-slate-500 mb-10 max-w-md mx-auto font-medium leading-relaxed">Prepare for your KJM442 assessment with these 10 core questions covering conduction, convection, and radiation.</p>
+                        <button onclick="startQuiz()" class="bg-orange-600 text-white font-black px-12 py-5 rounded-2xl shadow-xl hover:bg-orange-700 transition-all transform hover:scale-105 uppercase tracking-widest text-sm flex items-center gap-3 mx-auto">
+                            Begin Assessment <i class="fa-solid fa-play text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Quiz Question Screen -->
+                    <div id="quiz-question-screen" class="hidden flex flex-col h-full relative z-10">
+                        <div class="flex justify-between items-center mb-10">
+                            <div>
+                                <span class="text-[10px] font-black text-orange-600 uppercase tracking-[0.2em] block mb-1">Session Progress</span>
+                                <h4 class="text-xl font-bold text-slate-800" id="quiz-progress-text">Question 1 of 10</h4>
+                            </div>
+                            <div class="flex gap-1.5" id="quiz-dots"></div>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <h3 id="quiz-question-text" class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-10 leading-tight"></h3>
+                            <div id="quiz-options-container" class="grid grid-cols-1 gap-4"></div>
+                        </div>
+
+                        <div class="mt-auto pt-8 flex justify-between items-center border-t border-slate-100">
+                            <span class="text-xs font-bold text-slate-400 italic" id="quiz-feedback">Select the most accurate answer.</span>
+                            <button id="quiz-next-btn" onclick="handleNextQuestion()" disabled class="bg-slate-200 text-slate-400 font-black px-10 py-4 rounded-2xl transition-all cursor-not-allowed uppercase tracking-widest text-xs flex items-center gap-2">
+                                Next Step <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Result Screen -->
+                    <div id="quiz-result-screen" class="hidden text-center my-auto relative z-10">
+                        <div id="result-icon-container" class="w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                            <i id="result-icon" class="fa-solid fa-trophy text-6xl"></i>
+                        </div>
+                        <h2 class="text-4xl font-black text-slate-800 mb-2" id="result-title">Quiz Completed!</h2>
+                        <p class="text-slate-500 mb-8 font-medium" id="result-message">Analyzing your thermal engineering knowledge...</p>
+                        
+                        <div class="inline-block px-10 py-6 bg-slate-50 rounded-3xl mb-12 border border-slate-100">
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-widest block mb-2">Final Score</span>
+                            <div class="text-7xl font-black text-orange-600 tracking-tighter" id="quiz-final-score">0/10</div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row gap-4 justify-center">
+                            <button onclick="resetQuiz()" class="bg-slate-900 text-white font-black px-12 py-5 rounded-2xl shadow-xl hover:bg-slate-800 transition-all uppercase tracking-widest text-xs">
+                                Try Again
+                            </button>
+                            <button onclick="showSection('notes')" class="bg-white text-orange-600 border-2 border-orange-600 font-black px-12 py-5 rounded-2xl transition-all uppercase tracking-widest text-xs">
+                                Review Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- CLOSE CH1 CONTENT -->
+
+            <!-- CHAPTER 2 CONTENT -->
+            <div class="chapter-content ch2-content hidden">
+                <div class="text-center py-24">
+                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
+                        <i class="fa-solid fa-pen-to-square text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Fluid Mechanics Exercises</h2>
+                    <p class="text-slate-500 font-medium max-w-md mx-auto">Quizzes and AI Tutor specifically tuned for Chapter 2 are on the way.</p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        let isRunning = false;
-        let angle = 0;
-        let animationFrame;
-        const gamma = 1.4;
-        const P1 = 100; // kPa
+        let currentGeo = 'flat';
+        let labChart = null;
+        
+        const materialData = [
+            { name: 'Brick', k: 0.72, color: 0xef4444 },
+            { name: 'Concrete', k: 1.5, color: 0x94a3b8 },
+            { name: 'Wood', k: 0.13, color: 0x854d0e },
+            { name: 'Fiberglass', k: 0.04, color: 0xeab308 },
+            { name: 'Steel', k: 45, color: 0x334155 },
+            { name: 'Aluminum', k: 205, color: 0xe2e8f0 },
+            { name: 'Copper', k: 401, color: 0xc2410c }
+        ];
 
-        // Chart Instances
-        let chartOtto, chartDiesel;
+        let layers = [
+            { id: 1, name: 'Brick', k: 0.72, L: 0.2, color: 0xef4444 },
+            { id: 2, name: 'Fiberglass', k: 0.04, L: 0.1, color: 0xeab308 }
+        ];
 
-        function initCharts() {
-            const commonOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { type: 'linear', title: { display: true, text: 'Volume (Relative)' }, min: 0, max: 22 },
-                    y: { type: 'linear', title: { display: true, text: 'Pressure (kPa)' }, min: 0, max: 8000 }
-                },
-                plugins: { legend: { display: false } },
-                animation: { duration: 0 }
+        const quizQuestions = [
+            { q: "What is the primary driving force for heat transfer?", options: ["Pressure difference", "Temperature difference", "Gravity", "Velocity"], answer: 1 },
+            { q: "In Fourier's Law (Q = -kA dT/dx), what does 'k' represent?", options: ["Thermal Resistance", "Convection Coefficient", "Thermal Conductivity", "Kinetic Energy"], answer: 2 },
+            { q: "Which mode of heat transfer can occur through a vacuum?", options: ["Conduction", "Convection", "Radiation", "Evaporation"], answer: 2 },
+            { q: "Newton's Law of Cooling is used to calculate heat transfer for which mechanism?", options: ["Conduction", "Convection", "Radiation", "Sublimation"], answer: 1 },
+            { q: "What happens to the total thermal resistance if you add more layers of material in series?", options: ["It increases", "It decreases", "It stays the same", "It becomes zero"], answer: 0 },
+            { q: "Thermal conductivity (k) of metals generally __________ as temperature increases.", options: ["Increases", "Decreases", "Remains constant", "Becomes negative"], answer: 1 },
+            { q: "The ratio of the internal resistance of a body to its surface resistance is called:", options: ["Nusselt Number", "Prandtl Number", "Biot Number", "Reynolds Number"], answer: 2 },
+            { q: "For a plane wall of thickness L, the thermal resistance for conduction is:", options: ["L / (kA)", "k / (LA)", "kA / L", "1 / (kLA)"], answer: 0 },
+            { q: "Emissivity (ε) for a perfect blackbody is equal to:", options: ["0", "0.5", "1.0", "Infinite"], answer: 2 },
+            { q: "The mechanism of heat transfer involving actual bulk motion of matter is:", options: ["Conduction", "Convection", "Radiation", "Absorption"], answer: 1 }
+        ];
+
+        let quizCurrentIndex = 0;
+        let quizScore = 0;
+        let quizSelectedAnswer = null;
+
+        let scene, camera, renderer, layersGroup;
+        let isDragging = false;
+        let previousPosition = { x: 0, y: 0 };
+
+        function init3D() {
+            const container = document.getElementById('three-container');
+            if (!container) return;
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(4, 3, 6);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            let dLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dLight.position.set(5, 10, 7);
+            scene.add(dLight);
+
+            layersGroup = new THREE.Group();
+            scene.add(layersGroup);
+
+            const onStart = (x, y) => { isDragging = true; previousPosition = { x, y }; };
+            const onMove = (x, y) => {
+                if (!isDragging) return;
+                const deltaMove = { x: x - previousPosition.x, y: y - previousPosition.y };
+                layersGroup.rotation.y += deltaMove.x * 0.01;
+                layersGroup.rotation.x += deltaMove.y * 0.01;
+                previousPosition = { x, y };
             };
+            const onEnd = () => { isDragging = false; };
 
-            chartOtto = new Chart(document.getElementById('canvasOtto'), {
-                type: 'line',
-                data: {
-                    datasets: [
-                        { label: 'Otto Path', data: [], borderColor: '#3498db', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.2 },
-                        { label: 'Current', data: [], backgroundColor: 'red', pointRadius: 6, pointHoverRadius: 8 }
-                    ]
-                },
-                options: commonOptions
-            });
+            container.addEventListener('mousedown', (e) => onStart(e.clientX, e.clientY));
+            window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+            window.addEventListener('mouseup', onEnd);
+            container.addEventListener('touchstart', (e) => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
+            container.addEventListener('touchmove', (e) => { const t = e.touches[0]; onMove(t.clientX, t.clientY); }, { passive: true });
+            container.addEventListener('touchend', onEnd);
 
-            chartDiesel = new Chart(document.getElementById('canvasDiesel'), {
-                type: 'line',
-                data: {
-                    datasets: [
-                        { label: 'Diesel Path', data: [], borderColor: '#e67e22', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.2 },
-                        { label: 'Current', data: [], backgroundColor: 'red', pointRadius: 6, pointHoverRadius: 8 }
-                    ]
-                },
-                options: commonOptions
-            });
-        }
-
-        function updateSim() {
-            const r = parseFloat(document.getElementById('paramR').value);
-            const rho = parseFloat(document.getElementById('paramRho').value);
-            document.getElementById('rDisp').innerText = r;
-            document.getElementById('rhoDisp').innerText = rho;
-
-            // --- Otto Calculation ---
-            const V1 = r, V2 = 1;
-            const P2_O = P1 * Math.pow(r, gamma);
-            const P3_O = P2_O * 2.5; // Assuming heat addition factor
-            const P4_O = P3_O * Math.pow(1/r, gamma);
-            
-            let ottoPath = [];
-            // 1-2 (Compression)
-            for(let v=V1; v>=V2; v-=0.5) ottoPath.push({x: v, y: P1 * Math.pow(V1/v, gamma)});
-            // 2-3 (Const Vol)
-            ottoPath.push({x: V2, y: P3_O});
-            // 3-4 (Expansion)
-            for(let v=V2; v<=V1; v+=0.5) ottoPath.push({x: v, y: P3_O * Math.pow(V2/v, gamma)});
-            // 4-1 (Const Vol)
-            ottoPath.push({x: V1, y: P1});
-            
-            chartOtto.data.datasets[0].data = ottoPath;
-            chartOtto.options.scales.x.max = r + 2;
-            chartOtto.update();
-
-            // --- Diesel Calculation ---
-            const P2_D = P1 * Math.pow(r, gamma);
-            const V3_D = rho; // rho = V3/V2, since V2=1
-            const P4_D = P2_D * Math.pow(V3_D/V1, gamma);
-
-            let dieselPath = [];
-            // 1-2 (Comp)
-            for(let v=V1; v>=V2; v-=0.5) dieselPath.push({x: v, y: P1 * Math.pow(V1/v, gamma)});
-            // 2-3 (Const Pres)
-            dieselPath.push({x: V3_D, y: P2_D});
-            // 3-4 (Exp)
-            for(let v=V3_D; v<=V1; v+=0.5) dieselPath.push({x: v, y: P2_D * Math.pow(V3_D/v, gamma)});
-            // 4-1 (Const Vol)
-            dieselPath.push({x: V1, y: P1});
-
-            chartDiesel.data.datasets[0].data = dieselPath;
-            chartDiesel.options.scales.x.max = r + 2;
-            chartDiesel.update();
-
-            // Efficiencies
-            const effO = (1 - (1 / Math.pow(r, gamma - 1))) * 100;
-            const effD = (1 - (1 / Math.pow(r, gamma - 1)) * ( (Math.pow(rho, gamma) - 1) / (gamma * (rho - 1)) )) * 100;
-            
-            document.getElementById('ottoEff').innerHTML = `$\\eta = ${effO.toFixed(1)}\\%$`;
-            document.getElementById('dieselEff').innerHTML = `$\\eta = ${effD.toFixed(1)}\\%$`;
-            if (window.MathJax) MathJax.typesetPromise();
+            animate();
         }
 
         function animate() {
-            angle += 0.04;
-            const r = parseFloat(document.getElementById('paramR').value);
-            const rho = parseFloat(document.getElementById('paramRho').value);
-            
-            // Piston motion (simplified slider-crank)
-            const crankRadius = 40;
-            const yBase = 100;
-            const offset = Math.cos(angle) * crankRadius;
-            const yPos = yBase + offset;
-
-            // Map yPos to Volume (V=1 at TDC, V=r at BDC)
-            // angle 0 is BDC (y=140), angle PI is TDC (y=60)
-            const v = 1 + ((yPos - 60) / (80)) * (r - 1);
-
-            // Update Piston & Rod
-            document.getElementById('pistonO').setAttribute('y', yPos);
-            document.getElementById('pistonD').setAttribute('y', yPos);
-            document.getElementById('rodO').setAttribute('y1', yPos + 40);
-            document.getElementById('rodD').setAttribute('y1', yPos + 40);
-            
-            // Crank rotation
-            const cx = 75 + Math.sin(angle) * 30;
-            const cy = 210 + Math.cos(angle) * 30;
-            document.getElementById('rodO').setAttribute('x2', cx);
-            document.getElementById('rodO').setAttribute('y2', cy);
-            document.getElementById('rodD').setAttribute('x2', cx);
-            document.getElementById('rodD').setAttribute('y2', cy);
-
-            // Update Charts Live Position
-            // Logic to determine if we are in compression or expansion
-            const isExpanding = Math.sin(angle) > 0;
-            
-            // Otto Live Point
-            let pO;
-            if(!isExpanding) pO = P1 * Math.pow(r/v, gamma); // Compression
-            else pO = (P1 * Math.pow(r, gamma) * 2.5) * Math.pow(1/v, gamma); // Expansion
-            chartOtto.data.datasets[1].data = [{x: v, y: pO}];
-            chartOtto.update('none');
-
-            // Diesel Live Point
-            let pD;
-            const P2_D = P1 * Math.pow(r, gamma);
-            if(!isExpanding) pD = P1 * Math.pow(r/v, gamma);
-            else {
-                if(v <= rho) pD = P2_D; // Constant pressure phase
-                else pD = P2_D * Math.pow(rho/v, gamma); // Isentropic expansion
-            }
-            chartDiesel.data.datasets[1].data = [{x: v, y: pD}];
-            chartDiesel.update('none');
-
-            animationFrame = requestAnimationFrame(animate);
+            requestAnimationFrame(animate);
+            if (renderer) renderer.render(scene, camera);
         }
 
-        function toggleEngine() {
-            isRunning = !isRunning;
-            const btn = document.getElementById('btnRun');
-            if(isRunning) {
-                btn.innerText = "STOP SIMULATION";
-                btn.classList.replace('btn-primary', 'btn-danger');
-                animate();
-            } else {
-                btn.innerText = "START SIMULATION";
-                btn.classList.replace('btn-danger', 'btn-primary');
-                cancelAnimationFrame(animationFrame);
+        function update3DModel() {
+            if (!layersGroup) return;
+            while(layersGroup.children.length > 0) { 
+                const obj = layersGroup.children[0];
+                if(obj.geometry) obj.geometry.dispose();
+                if(obj.material) obj.material.dispose();
+                layersGroup.remove(obj); 
+            }
+
+            const totalL = layers.reduce((sum, l) => sum + l.L, 0);
+            let currentRadius = 0.5; 
+            let currentPos = -totalL / 2;
+
+            layers.forEach((layer, i) => {
+                const mat = new THREE.MeshPhongMaterial({ 
+                    color: layer.color, 
+                    transparent: true, 
+                    opacity: 0.9, 
+                    shininess: 80,
+                    side: THREE.DoubleSide
+                });
+
+                let mesh;
+                if (currentGeo === 'flat') {
+                    const geo = new THREE.BoxGeometry(layer.L, 2, 2);
+                    mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.x = currentPos + layer.L / 2;
+                    layersGroup.add(mesh);
+                    currentPos += layer.L;
+                } else {
+                    const outerR = currentRadius + layer.L;
+                    const shape = new THREE.Shape();
+                    shape.absarc(0, 0, outerR, 0, Math.PI * 2, false);
+                    const holePath = new THREE.Path();
+                    holePath.absarc(0, 0, currentRadius, 0, Math.PI * 2, true);
+                    shape.holes.push(holePath);
+                    const extrudeSettings = { depth: 3, bevelEnabled: false, curveSegments: 48 };
+                    const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                    mesh = new THREE.Mesh(geo, mat);
+                    mesh.rotation.y = Math.PI / 2;
+                    mesh.position.x = -1.5; 
+                    layersGroup.add(mesh);
+                    currentRadius = outerR;
+                }
+            });
+        }
+
+        function showNoteTab(tabId) {
+            document.querySelectorAll('.note-tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById('note-' + tabId).classList.remove('hidden');
+            document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+                btn.classList.remove('note-tab-active');
+                btn.classList.add('text-slate-500');
+            });
+            document.getElementById('tab-btn-' + tabId).classList.add('note-tab-active');
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('section-' + id).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn-desktop, .nav-btn-mobile').forEach(btn => {
+                btn.classList.remove('nav-item-active', 'text-orange-600');
+                btn.classList.add('text-slate-400');
+            });
+            const dBtn = document.getElementById(`nav-${id}-desktop`);
+            const mBtn = document.getElementById(`nav-${id}-mobile`);
+            if(dBtn) dBtn.classList.add('nav-item-active', 'text-orange-600');
+            if(mBtn) mBtn.classList.add('nav-item-active', 'text-orange-600');
+
+            if(id === 'lab') {
+                setTimeout(() => {
+                    if(!renderer) init3D();
+                    runSim();
+                }, 100);
             }
         }
 
-        function checkAnswer() {
-            if(document.getElementById('ex2').checked) {
-                alert("Correct! A higher compression ratio means the gas expands more during the power stroke, converting more heat energy into mechanical work.");
+        function switchGeometry(geo) {
+            currentGeo = geo;
+            const bF = document.getElementById('btn-geo-flat');
+            const bC = document.getElementById('btn-geo-cyl');
+            if(geo === 'flat') {
+                bF.classList.add('bg-white', 'shadow-sm'); bC.classList.remove('bg-white', 'shadow-sm');
+                bF.classList.remove('text-slate-500'); bC.classList.add('text-slate-500');
             } else {
-                alert("Incorrect. While temperature does increase, the fundamental reason for higher efficiency is the increased expansion ratio.");
+                bC.classList.add('bg-white', 'shadow-sm'); bF.classList.remove('bg-white', 'shadow-sm');
+                bC.classList.remove('text-slate-500'); bF.classList.add('text-slate-500');
+            }
+            if(layersGroup) layersGroup.rotation.set(0,0,0);
+            renderLayers();
+            runSim();
+        }
+
+        function syncTemp(type, val) {
+            const numVal = parseFloat(val);
+            if(type === 'thot') {
+                document.getElementById('sim-thot').value = numVal;
+                document.getElementById('input-thot').value = numVal;
+            } else {
+                document.getElementById('sim-tcold').value = numVal;
+                document.getElementById('input-tcold').value = numVal;
+            }
+            runSim();
+        }
+
+        function addLayer() {
+            if(layers.length >= 5) return;
+            const mat = materialData[layers.length % materialData.length];
+            layers.push({ id: Date.now(), name: mat.name, k: mat.k, L: 0.1, color: mat.color });
+            renderLayers();
+            runSim();
+        }
+
+        function removeLayer(id) {
+            if(layers.length <= 1) return;
+            layers = layers.filter(l => l.id !== id);
+            renderLayers();
+            runSim();
+        }
+
+        function updateLayerMaterial(id, materialName) {
+            const layer = layers.find(l => l.id === id);
+            const mat = materialData.find(m => m.name === materialName);
+            if(layer && mat) {
+                layer.name = mat.name;
+                layer.k = mat.k;
+                layer.color = mat.color;
+                renderLayers(); 
+                runSim();
+            }
+        }
+
+        function updateLayerProp(id, field, value) {
+            const layer = layers.find(l => l.id === id);
+            if(layer) {
+                layer[field] = parseFloat(value);
+                runSim();
+            }
+        }
+
+        function renderLayers() {
+            const container = document.getElementById('layers-container');
+            container.innerHTML = layers.map((l, idx) => `
+                <div class="bg-white border rounded-2xl p-4 relative shadow-sm hover:shadow-md transition-shadow">
+                    <button onclick="removeLayer(${l.id})" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-5 h-5 rounded-full text-center text-[10px] text-white font-bold leading-5" style="background-color: #${l.color.toString(16).padStart(6, '0')}">${idx+1}</div>
+                        <select onchange="updateLayerMaterial(${l.id}, this.value)" class="font-bold text-xs bg-transparent border-none focus:ring-0 cursor-pointer">
+                            ${materialData.map(m => `<option value="${m.name}" ${m.name === l.name ? 'selected' : ''}>${m.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[8px] font-bold text-slate-400 block uppercase">k (W/m.K)</label>
+                            <input type="number" step="0.01" value="${l.k}" onchange="updateLayerProp(${l.id}, 'k', this.value)" class="w-full bg-slate-50 border rounded px-2 py-1 text-[10px] font-mono">
+                        </div>
+                        <div>
+                            <label class="text-[8px] font-bold text-slate-400 block uppercase">${currentGeo === 'flat' ? 'Thickness (m)' : 'Δr (m)'}</label>
+                            <input type="number" step="0.01" min="0.01" value="${l.L}" onchange="updateLayerProp(${l.id}, 'L', this.value)" class="w-full bg-slate-50 border rounded px-2 py-1 text-[10px] font-mono">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function runSim() {
+            const thot = parseFloat(document.getElementById('sim-thot').value);
+            const tcold = parseFloat(document.getElementById('sim-tcold').value);
+            let totalRt = 0;
+            let currentRadius = 0.5;
+            const temps = [thot];
+            const positions = [currentGeo === 'flat' ? 0 : 0.5];
+
+            layers.forEach(l => {
+                let rt = currentGeo === 'flat' ? (l.L / (l.k * 1.0)) : (Math.log((currentRadius + l.L) / currentRadius) / (2 * Math.PI * l.k * 1.0));
+                totalRt += rt;
+                currentRadius += l.L;
+            });
+
+            const Q = (thot - tcold) / totalRt;
+            document.getElementById('res-rt').innerText = totalRt.toFixed(4);
+            document.getElementById('res-q').innerText = Math.abs(Q).toFixed(1);
+            document.getElementById('res-flux').innerText = (Math.abs(Q)/1.0).toFixed(1);
+
+            let lastT = thot;
+            let lastR = 0.5;
+            layers.forEach(l => {
+                let rt = currentGeo === 'flat' ? (l.L / (l.k * 1.0)) : (Math.log((lastR + l.L) / lastR) / (2 * Math.PI * l.k * 1.0));
+                lastR += l.L;
+                lastT -= Q * rt;
+                temps.push(lastT);
+                positions.push(currentGeo === 'flat' ? positions[positions.length-1] + l.L : lastR);
+            });
+
+            update3DModel();
+            updateChart(positions, temps);
+            renderThermalCircuit(temps);
+        }
+
+        function updateChart(pos, temps) {
+            const ctx = document.getElementById('labChart').getContext('2d');
+            if(labChart) labChart.destroy();
+            labChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: pos.map(p => p.toFixed(2)),
+                    datasets: [{ 
+                        label: 'Temperature Profile (°C)', 
+                        data: temps.map(t => t.toFixed(2)), 
+                        borderColor: '#f97316', 
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        fill: true, 
+                        tension: 0.3,
+                        pointRadius: 4
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderThermalCircuit(temps) {
+            const container = document.getElementById('thermal-circuit');
+            if(!container) return;
+            let html = `<div class="node-circle bg-orange-600 shadow-lg"><span class="node-label">T₁: ${temps[0].toFixed(1)}°C</span></div>`;
+            layers.forEach((l, idx) => {
+                html += `
+                    <div class="circuit-segment"><div class="resistor-line"></div><div class="resistor-symbol"></div><div class="resistor-line"></div></div>
+                    <div class="node-circle ${idx === layers.length - 1 ? 'bg-blue-600' : 'bg-slate-400'}">
+                        <span class="node-label">T<sub>${idx+2}</sub>: ${temps[idx+1].toFixed(1)}°C</span>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // --- QUIZ Logic ---
+        function startQuiz() {
+            quizCurrentIndex = 0;
+            quizScore = 0;
+            document.getElementById('quiz-start-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            document.getElementById('quiz-question-screen').classList.remove('hidden');
+            renderQuizDots();
+            showQuestion();
+        }
+
+        function renderQuizDots() {
+            const dotsContainer = document.getElementById('quiz-dots');
+            dotsContainer.innerHTML = quizQuestions.map((_, i) => `
+                <div class="w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-orange-600 w-4' : 'bg-slate-200'}"></div>
+            `).join('');
+        }
+
+        function updateQuizDots() {
+            const dots = document.querySelectorAll('#quiz-dots div');
+            dots.forEach((dot, i) => {
+                if(i === quizCurrentIndex) {
+                    dot.className = "w-4 h-2 rounded-full bg-orange-600 transition-all duration-300";
+                } else if (i < quizCurrentIndex) {
+                    dot.className = "w-2 h-2 rounded-full bg-emerald-400 transition-all duration-300";
+                } else {
+                    dot.className = "w-2 h-2 rounded-full bg-slate-200 transition-all duration-300";
+                }
+            });
+        }
+
+        function showQuestion() {
+            const q = quizQuestions[quizCurrentIndex];
+            quizSelectedAnswer = null;
+            document.getElementById('quiz-progress-text').innerText = `Question ${quizCurrentIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-question-text').innerText = q.q;
+            document.getElementById('quiz-feedback').innerText = "Select the most accurate answer.";
+            document.getElementById('quiz-feedback').className = "text-xs font-bold text-slate-400 italic";
+            
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = q.options.map((opt, i) => `
+                <button onclick="selectQuizOption(${i})" class="quiz-option w-full p-5 rounded-2xl text-left font-bold text-slate-700 bg-white flex items-center gap-5 shadow-sm border-2 border-slate-100">
+                    <div class="w-10 h-10 min-w-[40px] rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 text-sm">${String.fromCharCode(65 + i)}</div>
+                    <span class="text-sm md:text-base">${opt}</span>
+                </button>
+            `).join('');
+
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = "bg-slate-200 text-slate-400 font-black px-10 py-4 rounded-2xl transition-all cursor-not-allowed uppercase tracking-widest text-xs flex items-center gap-2";
+            updateQuizDots();
+        }
+
+        function selectQuizOption(index) {
+            quizSelectedAnswer = index;
+            document.querySelectorAll('.quiz-option').forEach((opt, i) => {
+                if(i === index) {
+                    opt.className = "quiz-option selected w-full p-5 rounded-2xl text-left font-bold text-orange-700 bg-orange-50 flex items-center gap-5 shadow-md border-2 border-orange-500";
+                    opt.querySelector('div').className = "w-10 h-10 min-w-[40px] rounded-xl bg-orange-600 flex items-center justify-center text-white text-sm";
+                } else {
+                    opt.className = "quiz-option w-full p-5 rounded-2xl text-left font-bold text-slate-700 bg-white flex items-center gap-5 shadow-sm border-2 border-slate-100";
+                    opt.querySelector('div').className = "w-10 h-10 min-w-[40px] rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 text-sm";
+                }
+            });
+            const nextBtn = document.getElementById('quiz-next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = "bg-orange-600 text-white font-black px-10 py-4 rounded-2xl shadow-xl transform hover:scale-105 transition-all uppercase tracking-widest text-xs flex items-center gap-2";
+            
+            document.getElementById('quiz-feedback').innerText = "Choice confirmed. Ready to proceed?";
+            document.getElementById('quiz-feedback').className = "text-xs font-bold text-orange-500 italic";
+        }
+
+        function handleNextQuestion() {
+            if(quizSelectedAnswer === quizQuestions[quizCurrentIndex].answer) quizScore++;
+            if(quizCurrentIndex < quizQuestions.length - 1) {
+                quizCurrentIndex++;
+                showQuestion();
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById('quiz-question-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.remove('hidden');
+            
+            const scorePercent = (quizScore / quizQuestions.length) * 100;
+            const iconContainer = document.getElementById('result-icon-container');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const message = document.getElementById('result-message');
+            
+            if (scorePercent >= 80) {
+                iconContainer.className = "w-32 h-32 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
+                icon.className = "fa-solid fa-trophy text-6xl";
+                title.innerText = "Excellent Performance!";
+                message.innerText = "You have a solid grasp of thermal engineering fundamentals.";
+            } else if (scorePercent >= 50) {
+                iconContainer.className = "w-32 h-32 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
+                icon.className = "fa-solid fa-star text-6xl";
+                title.innerText = "Good Effort!";
+                message.innerText = "You understand the basics, but some topics need more review.";
+            } else {
+                iconContainer.className = "w-32 h-32 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
+                icon.className = "fa-solid fa-book-open-reader text-6xl";
+                title.innerText = "Keep Learning!";
+                message.innerText = "Review the notes and lectures to strengthen your understanding.";
+            }
+            
+            document.getElementById('quiz-final-score').innerText = `${quizScore}/${quizQuestions.length}`;
+        }
+
+        function resetQuiz() {
+            startQuiz();
+        }
+
+        // --- CHAPTER SWITCHER ---
+        function switchChapter(chap) {
+            const btn1 = document.getElementById('btn-ch1');
+            const btn2 = document.getElementById('btn-ch2');
+            
+            if(chap === 1) {
+                btn1.className = "px-4 py-1.5 rounded-xl bg-orange-600 text-white text-[10px] font-black shadow-lg tracking-widest uppercase transition-all";
+                btn2.className = "px-4 py-1.5 rounded-xl bg-white/10 text-white hover:bg-white/20 text-[10px] font-black transition-all tracking-widest uppercase";
+            } else {
+                btn2.className = "px-4 py-1.5 rounded-xl bg-blue-600 text-white text-[10px] font-black shadow-lg tracking-widest uppercase transition-all";
+                btn1.className = "px-4 py-1.5 rounded-xl bg-white/10 text-white hover:bg-white/20 text-[10px] font-black transition-all tracking-widest uppercase";
+            }
+
+            document.querySelectorAll('.chapter-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll(`.ch${chap}-content`).forEach(el => el.classList.remove('hidden'));
+            
+            // Re-render 3D and charts if switching back to chapter 1
+            if(chap === 1) {
+                setTimeout(() => {
+                    runSim();
+                }, 50);
             }
         }
 
         window.onload = () => {
-            initCharts();
-            updateSim();
+            renderLayers();
+            showSection('notes');
         };
     </script>
 </body>
