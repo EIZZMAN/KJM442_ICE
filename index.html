@@ -346,7 +346,7 @@
                     <div class="space-y-6">
                         <h3 class="text-3xl font-bold text-slate-800">Thermal Convection</h3>
                         <p class="text-slate-600 leading-relaxed">Convection occurs between a solid surface and an adjacent fluid that is in motion.</p>
-                        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-2xl">
+                        <div class="bg-blue-50 p-4 rounded-xl border-l-4 border-blue-500">
                             <h4 class="font-bold text-blue-900 mb-2 italic">Newton's Law of Cooling:</h4>
                             <p class="engineering-font text-xl text-blue-600 font-black">Q = h A (T<sub>s</sub> - T<sub>∞</sub>)</p>
                             <p class="text-xs text-blue-700 mt-2 font-semibold">h = convection heat transfer coefficient (W/m².K)</p>
@@ -1186,7 +1186,8 @@
             
             function draw() {
                 if(iceIsRunning) {
-                    crankAngle += (iceRpm / 60) * 1.0; 
+                    // Kadar kelajuan putaran diselaraskan daripada faktor gandaan asal 1.0 kepada 0.2
+                    crankAngle += (iceRpm / 60) * 0.2; 
                     if(crankAngle >= 720) crankAngle = 0;
                 }
                 
@@ -1682,69 +1683,6 @@
             nextBtn.disabled = true;
             nextBtn.className = "bg-slate-200 text-slate-400 font-black px-10 py-4 rounded-2xl transition-all cursor-not-allowed uppercase tracking-widest text-xs flex items-center gap-2";
             updateQuizDots();
-        }
-
-        function selectQuizOption(index) {
-            quizSelectedAnswer = index;
-            document.querySelectorAll('.quiz-option').forEach((opt, i) => {
-                if(i === index) {
-                    opt.className = "quiz-option selected w-full p-5 rounded-2xl text-left font-bold text-orange-700 bg-orange-50 flex items-center gap-5 shadow-md border-2 border-orange-500";
-                    opt.querySelector('div').className = "w-10 h-10 min-w-[40px] rounded-xl bg-orange-600 flex items-center justify-center text-white text-sm";
-                } else {
-                    opt.className = "quiz-option w-full p-5 rounded-2xl text-left font-bold text-slate-700 bg-white flex items-center gap-5 shadow-sm border-2 border-slate-100";
-                    opt.querySelector('div').className = "w-10 h-10 min-w-[40px] rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 text-sm";
-                }
-            });
-            const nextBtn = document.getElementById('quiz-next-btn');
-            nextBtn.disabled = false;
-            nextBtn.className = "bg-orange-600 text-white font-black px-10 py-4 rounded-2xl shadow-xl transform hover:scale-105 transition-all uppercase tracking-widest text-xs flex items-center gap-2";
-            
-            document.getElementById('quiz-feedback').innerText = "Choice confirmed. Ready to proceed?";
-            document.getElementById('quiz-feedback').className = "text-xs font-bold text-orange-500 italic";
-        }
-
-        function handleNextQuestion() {
-            if(quizSelectedAnswer === quizQuestions[quizCurrentIndex].answer) quizScore++;
-            if(quizCurrentIndex < quizQuestions.length - 1) {
-                quizCurrentIndex++;
-                showQuestion();
-            } else {
-                showQuizResults();
-            }
-        }
-
-        function showQuizResults() {
-            document.getElementById('quiz-question-screen').classList.add('hidden');
-            document.getElementById('quiz-result-screen').classList.remove('hidden');
-            
-            const scorePercent = (quizScore / quizQuestions.length) * 100;
-            const iconContainer = document.getElementById('result-icon-container');
-            const icon = document.getElementById('result-icon');
-            const title = document.getElementById('result-title');
-            const message = document.getElementById('result-message');
-            
-            if (scorePercent >= 80) {
-                iconContainer.className = "w-32 h-32 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
-                icon.className = "fa-solid fa-trophy text-6xl";
-                title.innerText = "Excellent Performance!";
-                message.innerText = "You have a solid grasp of thermal engineering fundamentals.";
-            } else if (scorePercent >= 50) {
-                iconContainer.className = "w-32 h-32 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
-                icon.className = "fa-solid fa-star text-6xl";
-                title.innerText = "Good Effort!";
-                message.innerText = "You understand the basics, but some topics need more review.";
-            } else {
-                iconContainer.className = "w-32 h-32 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
-                icon.className = "fa-solid fa-book-open-reader text-6xl";
-                title.innerText = "Keep Learning!";
-                message.innerText = "Review the notes and lectures to strengthen your understanding.";
-            }
-            
-            document.getElementById('quiz-final-score').innerText = `${quizScore}/${quizQuestions.length}`;
-        }
-
-        function resetQuiz() {
-            startQuiz('ch1');
         }
 
         // --- CH2 Dots & Quiz (UPDATED INTERACTIVE LABELS & FEEDBACKS TO ENGLISH) ---
