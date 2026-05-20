@@ -104,13 +104,13 @@
             color: #f97316;
         }
 
-        #three-container {
+        #three-container, #ice-canvas-container {
             width: 100%;
             height: 100%;
             cursor: grab;
             touch-action: none;
         }
-        #three-container:active { cursor: grabbing; }
+        #three-container:active, #ice-canvas-container:active { cursor: grabbing; }
 
         .circuit-segment {
             display: flex;
@@ -163,6 +163,33 @@
             border-color: #f97316;
             background-color: #ffedd5;
         }
+
+        /* Chart Styling for ICE Cycle */
+        .ice-diagram {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+        }
+
+        /* Custom ICE Slider styling */
+        .ice-slider {
+            -webkit-appearance: none;
+            height: 6px;
+            background: #cbd5e1;
+            border-radius: 5px;
+            outline: none;
+        }
+        .ice-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body class="text-slate-900">
@@ -182,7 +209,7 @@
                     <!-- CHAPTER SELECTOR -->
                     <div class="flex gap-2 mt-4">
                         <button onclick="switchChapter(1)" id="btn-ch1" class="px-4 py-1.5 rounded-xl bg-orange-600 text-white text-[10px] font-black shadow-lg tracking-widest uppercase transition-all">CH 1: Heat Transfer</button>
-                        <button onclick="switchChapter(2)" id="btn-ch2" class="px-4 py-1.5 rounded-xl bg-white/10 text-white hover:bg-white/20 text-[10px] font-black transition-all tracking-widest uppercase">CH 2: Fluid Mechanics</button>
+                        <button onclick="switchChapter(2)" id="btn-ch2" class="px-4 py-1.5 rounded-xl bg-white/10 text-white hover:bg-white/20 text-[10px] font-black transition-all tracking-widest uppercase">CH 2: Internal Combustion Engines</button>
                     </div>
                 </div>
             </div>
@@ -351,12 +378,150 @@
 
             <!-- CHAPTER 2 CONTENT -->
             <div class="chapter-content ch2-content hidden">
-                <div class="text-center py-24">
-                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
-                        <i class="fa-solid fa-water text-5xl"></i>
+                <div class="mb-8 text-center md:text-left">
+                    <span class="text-blue-600 font-bold tracking-widest text-[10px] md:text-xs uppercase">Power Cycles & Engines</span>
+                    <h2 class="text-2xl md:text-4xl font-black mt-1 md:mt-2 text-slate-800">Internal Combustion Engines</h2>
+                    
+                    <div class="mt-6 flex bg-slate-200/50 p-1 rounded-2xl w-full max-w-lg mx-auto md:mx-0">
+                        <button onclick="showIceTab('intro')" id="ice-tab-intro" class="flex-1 py-2 text-[10px] md:text-xs font-extrabold rounded-xl transition-all note-tab-active">ICE INTRO</button>
+                        <button onclick="showIceTab('otto')" id="ice-tab-otto" class="flex-1 py-2 text-[10px] md:text-xs font-extrabold rounded-xl transition-all text-slate-500">OTTO CYCLE</button>
+                        <button onclick="showIceTab('diesel')" id="ice-tab-diesel" class="flex-1 py-2 text-[10px] md:text-xs font-extrabold rounded-xl transition-all text-slate-500">DIESEL CYCLE</button>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Fluid Mechanics Notes</h2>
-                    <p class="text-slate-500 font-medium max-w-md mx-auto">This chapter is currently under development. Interactive fluid visualizations will be available soon.</p>
+                </div>
+
+                <!-- SECTION 1: ICE INTRODUCTION -->
+                <div id="note-ice-intro" class="ice-tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="glass-card overflow-hidden bg-white p-6 flex flex-col items-center justify-center border-2 border-blue-100">
+                             <div class="w-full space-y-4">
+                                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                    <h4 class="font-black text-blue-900 text-sm mb-2"><i class="fa-solid fa-bolt mr-2"></i>What is an ICE?</h4>
+                                    <p class="text-xs text-blue-800 leading-relaxed">A heat engine where the combustion of a fuel occurs with an oxidizer (usually air) in a combustion chamber that is an integral part of the working fluid flow circuit.</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                        <span class="text-[9px] font-bold text-slate-400 block mb-1">STATIONARY</span>
+                                        <p class="text-[11px] font-bold">Spark Ignition (SI)</p>
+                                    </div>
+                                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                        <span class="text-[9px] font-bold text-slate-400 block mb-1">STATIONARY</span>
+                                        <p class="text-[11px] font-bold">Compression Ignition (CI)</p>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-3xl font-bold text-slate-800">Engine Basics</h3>
+                            <p class="text-slate-600 leading-relaxed">Internal Combustion Engines (ICE) are categorized primarily by their ignition method and cycle strokes. In Spark Ignition (SI) engines, a fuel-air mixture is ignited by a spark plug. In Compression Ignition (CI) engines, air is compressed to high temperatures before fuel is injected and self-ignites.</p>
+                            <ul class="space-y-2 text-sm font-semibold text-slate-700">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> High power-to-weight ratio</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Fast starting and acceleration</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Versatile fuel compatibility (Gasoline, Diesel, LNG)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: OTTO CYCLE -->
+                <div id="note-ice-otto" class="ice-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="ice-diagram p-4">
+                            <h4 class="text-[10px] font-black text-center mb-2 text-slate-400 uppercase tracking-widest">P-v Diagram: Ideal Otto Cycle</h4>
+                            <svg viewBox="0 0 400 300" class="w-full h-auto">
+                                <!-- Axes -->
+                                <path d="M50 20 L50 250 L350 250" fill="none" stroke="#334155" stroke-width="2" />
+                                <text x="30" y="30" font-family="serif" font-weight="bold" font-style="italic">P</text>
+                                <text x="360" y="260" font-family="serif" font-weight="bold" font-style="italic">v</text>
+                                
+                                <!-- Cycle Path -->
+                                <!-- 1 -> 2: Isentropic Compression -->
+                                <path d="M300 220 Q 150 210, 100 120" fill="none" stroke="#3b82f6" stroke-width="3" id="otto-path-1" />
+                                <!-- 2 -> 3: Constant Volume Heat Addition -->
+                                <path d="M100 120 L100 40" fill="none" stroke="#ef4444" stroke-width="3" id="otto-path-2" />
+                                <!-- 3 -> 4: Isentropic Expansion -->
+                                <path d="M100 40 Q 150 140, 300 160" fill="none" stroke="#3b82f6" stroke-width="3" id="otto-path-3" />
+                                <!-- 4 -> 1: Constant Volume Heat Rejection -->
+                                <path d="M300 160 L300 220" fill="none" stroke="#64748b" stroke-width="3" id="otto-path-4" />
+
+                                <!-- Points -->
+                                <circle cx="300" cy="220" r="4" fill="#334155" /><text x="310" y="230" font-weight="bold">1</text>
+                                <circle cx="100" cy="120" r="4" fill="#334155" /><text x="85" y="130" font-weight="bold">2</text>
+                                <circle cx="100" cy="40" r="4" fill="#334155" /><text x="85" y="45" font-weight="bold">3</text>
+                                <circle cx="300" cy="160" r="4" fill="#334155" /><text x="310" y="165" font-weight="bold">4</text>
+
+                                <!-- Labels -->
+                                <text x="110" y="80" fill="#ef4444" font-size="10" font-weight="bold">Q in (const v)</text>
+                                <text x="310" y="195" fill="#64748b" font-size="10" font-weight="bold">Q out</text>
+                            </svg>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-3xl font-bold text-slate-800">Ideal Otto Cycle</h3>
+                            <p class="text-slate-600 leading-relaxed text-sm">The ideal cycle for spark-ignition (SI) engines. It consists of four internally reversible processes:</p>
+                            <div class="bg-blue-50 p-4 rounded-xl border-l-4 border-blue-500">
+                                <ol class="text-xs space-y-2 font-bold text-blue-900 list-decimal pl-4">
+                                    <li>Isentropic Compression (1-2)</li>
+                                    <li>Constant Volume Heat Addition (2-3)</li>
+                                    <li>Isentropic Expansion (3-4)</li>
+                                    <li>Constant Volume Heat Rejection (4-1)</li>
+                                </ol>
+                            </div>
+                            <div class="bg-slate-900 p-4 rounded-xl text-white">
+                                <h4 class="text-[10px] text-orange-400 font-black uppercase mb-1">Thermal Efficiency (η)</h4>
+                                <p class="engineering-font text-lg font-black">η<sub>th,Otto</sub> = 1 - (1 / r<sup>k-1</sup>)</p>
+                                <p class="text-[9px] text-slate-400 mt-2">r = compression ratio, k = specific heat ratio</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: DIESEL CYCLE -->
+                <div id="note-ice-diesel" class="ice-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="ice-diagram p-4">
+                            <h4 class="text-[10px] font-black text-center mb-2 text-slate-400 uppercase tracking-widest">P-v Diagram: Ideal Diesel Cycle</h4>
+                            <svg viewBox="0 0 400 300" class="w-full h-auto">
+                                <!-- Axes -->
+                                <path d="M50 20 L50 250 L350 250" fill="none" stroke="#334155" stroke-width="2" />
+                                
+                                <!-- Cycle Path -->
+                                <!-- 1 -> 2: Isentropic Compression -->
+                                <path d="M320 220 Q 150 210, 80 120" fill="none" stroke="#3b82f6" stroke-width="3" />
+                                <!-- 2 -> 3: Constant Pressure Heat Addition -->
+                                <path d="M80 120 L180 120" fill="none" stroke="#ef4444" stroke-width="3" />
+                                <!-- 3 -> 4: Isentropic Expansion -->
+                                <path d="M180 120 Q 220 160, 320 170" fill="none" stroke="#3b82f6" stroke-width="3" />
+                                <!-- 4 -> 1: Constant Volume Heat Rejection -->
+                                <path d="M320 170 L320 220" fill="none" stroke="#64748b" stroke-width="3" />
+
+                                <!-- Points -->
+                                <circle cx="320" cy="220" r="4" fill="#334155" /><text x="330" y="230" font-weight="bold">1</text>
+                                <circle cx="80" cy="120" r="4" fill="#334155" /><text x="65" y="130" font-weight="bold">2</text>
+                                <circle cx="180" cy="120" r="4" fill="#334155" /><text x="180" y="110" font-weight="bold">3</text>
+                                <circle cx="320" cy="170" r="4" fill="#334155" /><text x="330" y="175" font-weight="bold">4</text>
+
+                                <!-- Labels -->
+                                <text x="100" y="110" fill="#ef4444" font-size="10" font-weight="bold">Q in (const P)</text>
+                                <text x="330" y="200" fill="#64748b" font-size="10" font-weight="bold">Q out</text>
+                            </svg>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-3xl font-bold text-slate-800">Ideal Diesel Cycle</h3>
+                            <p class="text-slate-600 leading-relaxed text-sm">The ideal cycle for compression-ignition (CI) engines. Unlike the Otto cycle, heat is added at constant pressure.</p>
+                            <div class="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-500">
+                                <ol class="text-xs space-y-2 font-bold text-amber-900 list-decimal pl-4">
+                                    <li>Isentropic Compression (1-2)</li>
+                                    <li>Constant Pressure Heat Addition (2-3)</li>
+                                    <li>Isentropic Expansion (3-4)</li>
+                                    <li>Constant Volume Heat Rejection (4-1)</li>
+                                </ol>
+                            </div>
+                            <div class="bg-slate-900 p-4 rounded-xl text-white">
+                                <h4 class="text-[10px] text-orange-400 font-black uppercase mb-1">Thermal Efficiency (η)</h4>
+                                <p class="engineering-font text-sm font-black">η = 1 - [ (1/r<sup>k-1</sup>) * (r<sub>c</sub><sup>k</sup> - 1)/(k(r<sub>c</sub>-1)) ]</p>
+                                <p class="text-[9px] text-slate-400 mt-2">r<sub>c</sub> = cutoff ratio, r = compression ratio</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -449,14 +614,107 @@
             </div>
             </div> <!-- CLOSE CH1 CONTENT -->
 
-            <!-- CHAPTER 2 CONTENT -->
+            <!-- CHAPTER 2 CONTENT: ICE LAB -->
             <div class="chapter-content ch2-content hidden">
-                <div class="text-center py-24">
-                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
-                        <i class="fa-solid fa-flask-vial text-5xl"></i>
+                <div class="mb-6 md:mb-10 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <span class="text-blue-600 font-bold tracking-widest text-[10px] md:text-xs uppercase">Power Cycle Lab</span>
+                        <h2 class="text-2xl md:text-4xl font-black mt-1 text-slate-800 uppercase italic">Engine Cycle Simulator</h2>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Fluid Dynamics Lab</h2>
-                    <p class="text-slate-500 font-medium max-w-md mx-auto">The Bernoulli and Pipe Friction simulators are being prepared.</p>
+                    <div class="flex bg-slate-200 p-1 rounded-xl w-full md:w-auto">
+                        <button id="btn-cycle-otto" onclick="switchIceCycle('otto')" class="flex-1 md:flex-none px-6 py-2 text-xs font-bold bg-white shadow-sm transition-all uppercase">Otto Cycle</button>
+                        <button id="btn-cycle-diesel" onclick="switchIceCycle('diesel')" class="flex-1 md:flex-none px-6 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all uppercase">Diesel Cycle</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- LEFT SIDE: CONTROLS -->
+                    <div class="lg:col-span-4 space-y-6">
+                        <div class="glass-card p-6">
+                            <h3 class="text-sm font-bold text-slate-800 mb-6 border-b pb-2 uppercase tracking-widest">Engine Parameters</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Compression Ratio (r)</label>
+                                        <span id="label-ice-r" class="text-xs font-black text-blue-600">8.0</span>
+                                    </div>
+                                    <input type="range" id="ice-param-r" min="4" max="22" step="0.5" value="8" oninput="updateIceParams()" class="ice-slider w-full cursor-pointer">
+                                </div>
+                                <div id="container-cutoff" class="hidden">
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Cutoff Ratio (r<sub>c</sub>)</label>
+                                        <span id="label-ice-rc" class="text-xs font-black text-blue-600">2.0</span>
+                                    </div>
+                                    <input type="range" id="ice-param-rc" min="1.1" max="4.0" step="0.1" value="2" oninput="updateIceParams()" class="ice-slider w-full cursor-pointer">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">RPM (Speed)</label>
+                                        <span id="label-ice-rpm" class="text-xs font-black text-orange-600">1000</span>
+                                    </div>
+                                    <input type="range" id="ice-param-rpm" min="200" max="4000" step="100" value="1000" oninput="updateIceParams()" class="ice-slider w-full cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                             <div class="absolute top-0 right-0 p-4 opacity-10">
+                                <i class="fa-solid fa-gauge-high text-6xl"></i>
+                             </div>
+                             <h4 class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-4">Real-time Performance</h4>
+                             <div class="space-y-4">
+                                <div class="flex justify-between items-end border-b border-slate-800 pb-2">
+                                    <span class="text-[11px] text-slate-400 font-bold uppercase">Thermal Efficiency</span>
+                                    <span id="ice-res-efficiency" class="text-xl font-black engineering-font text-emerald-400">0%</span>
+                                </div>
+                                <div class="flex justify-between items-end border-b border-slate-800 pb-2">
+                                    <span class="text-[11px] text-slate-400 font-bold uppercase">Current Stroke</span>
+                                    <span id="ice-res-stroke" class="text-[11px] font-black text-white px-2 py-0.5 bg-blue-600 rounded uppercase">Intake</span>
+                                </div>
+                                <div class="flex justify-between items-end">
+                                    <span class="text-[11px] text-slate-400 font-bold uppercase">Work Output (Net)</span>
+                                    <span id="ice-res-work" class="text-xl font-black engineering-font text-orange-400">0.0 kJ</span>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SIDE: VISUALS -->
+                    <div class="lg:col-span-8 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- PISTON ANIMATION -->
+                            <div class="glass-card p-0 h-[400px] overflow-hidden relative border border-slate-200 bg-slate-50 flex items-center justify-center">
+                                <div id="ice-canvas-container">
+                                    <canvas id="icePistonCanvas"></canvas>
+                                </div>
+                                <div class="absolute top-4 left-4 bg-white/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
+                                    <span class="text-[10px] text-slate-500 font-black uppercase tracking-wider block">Animation</span>
+                                    <span class="text-[9px] text-blue-600 font-bold uppercase tracking-widest italic" id="ice-status-indicator">Engine Running</span>
+                                </div>
+                            </div>
+
+                            <!-- P-V DIAGRAM (Enlarged with Dynamic Auto-Scaling) -->
+                            <div class="glass-card p-4 h-[400px] bg-white flex flex-col">
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Dynamic P-v Diagram</h4>
+                                <div class="flex-grow">
+                                    <canvas id="icePvChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTROLS ROW -->
+                        <div class="glass-card p-6 flex flex-wrap items-center justify-center gap-6">
+                            <button onclick="toggleIceEngine()" id="btn-ice-play" class="w-14 h-14 rounded-full bg-orange-600 text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all">
+                                <i id="ice-play-icon" class="fa-solid fa-pause text-xl"></i>
+                            </button>
+                            <div class="flex items-center gap-4">
+                                <span class="text-[10px] font-black text-slate-400 uppercase">Crank Angle:</span>
+                                <div class="bg-slate-100 px-4 py-2 rounded-xl border border-slate-200">
+                                    <span id="ice-crank-angle" class="text-lg font-black engineering-font text-slate-800">0°</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -511,12 +769,38 @@
 
             <!-- CHAPTER 2 CONTENT -->
             <div class="chapter-content ch2-content hidden">
-                <div class="text-center py-24">
-                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
-                        <i class="fa-solid fa-video text-5xl"></i>
+                <div class="mb-10">
+                    <span class="text-blue-600 font-bold tracking-widest text-[10px] md:text-xs uppercase">Internal Combustion Engines</span>
+                    <h2 class="text-2xl md:text-4xl font-black mt-1 text-slate-800">Chapter 2 Lectures</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl border-2 border-blue-500/10">
+                        <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                             <iframe class="w-full h-full" src="https://www.youtube.com/embed/QIj_TDvFIKA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="px-2">
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Lecture 01</span>
+                            <h3 class="font-bold text-lg text-slate-800">Introduction to Internal Combustion Engines</h3>
+                        </div>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Chapter 2 Lectures</h2>
-                    <p class="text-slate-500 font-medium max-w-md mx-auto">Lecture recordings for Fluid Mechanics will be uploaded soon.</p>
+                    <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl border-2 border-blue-500/10">
+                        <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                             <iframe class="w-full h-full" src="https://www.youtube.com/embed/s1sVU13Ci3k" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="px-2">
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Lecture 02</span>
+                            <h3 class="font-bold text-lg text-slate-800">Otto Cycle Analysis</h3>
+                        </div>
+                    </div>
+                    <div class="glass-card p-4 transition-all hover:scale-[1.02] hover:shadow-xl border-2 border-blue-500/10">
+                        <div class="aspect-video bg-slate-200 rounded-2xl overflow-hidden mb-4 shadow-inner">
+                             <iframe class="w-full h-full" src="https://www.youtube.com/embed/-6o3Ura1054" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="px-2">
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Lecture 03</span>
+                            <h3 class="font-bold text-lg text-slate-800">Diesel Cycle Fundamentals</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -537,7 +821,7 @@
                         </div>
                         <h2 class="text-4xl font-black text-slate-800 mb-4 tracking-tight">Thermal Technical Quiz</h2>
                         <p class="text-slate-500 mb-10 max-w-md mx-auto font-medium leading-relaxed">Prepare for your KJM442 assessment with these 10 core questions covering conduction, convection, and radiation.</p>
-                        <button onclick="startQuiz()" class="bg-orange-600 text-white font-black px-12 py-5 rounded-2xl shadow-xl hover:bg-orange-700 transition-all transform hover:scale-105 uppercase tracking-widest text-sm flex items-center gap-3 mx-auto">
+                        <button onclick="startQuiz('ch1')" class="bg-orange-600 text-white font-black px-12 py-5 rounded-2xl shadow-xl hover:bg-orange-700 transition-all transform hover:scale-105 uppercase tracking-widest text-sm flex items-center gap-3 mx-auto">
                             Begin Assessment <i class="fa-solid fa-play text-xs"></i>
                         </button>
                     </div>
@@ -549,7 +833,7 @@
                                 <span class="text-[10px] font-black text-orange-600 uppercase tracking-[0.2em] block mb-1">Session Progress</span>
                                 <h4 class="text-xl font-bold text-slate-800" id="quiz-progress-text">Question 1 of 10</h4>
                             </div>
-                            <div class="flex gap-1.5" id="quiz-dots"></div>
+                            <div class="flex gap-1.5" id="quiz-dots" style="display: flex; gap: 6px;"></div>
                         </div>
                         
                         <div class="mb-8">
@@ -591,22 +875,88 @@
             </div>
             </div> <!-- CLOSE CH1 CONTENT -->
 
-            <!-- CHAPTER 2 CONTENT -->
+            <!-- CHAPTER 2 CONTENT: ICE EXERCISE -->
             <div class="chapter-content ch2-content hidden">
-                <div class="text-center py-24">
-                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform rotate-3">
-                        <i class="fa-solid fa-pen-to-square text-5xl"></i>
+                <div class="max-w-4xl mx-auto space-y-8">
+                    <div class="glass-card p-8 min-h-[600px] flex flex-col shadow-2xl relative overflow-hidden">
+                        <!-- Background Decoration -->
+                        <div class="absolute -top-24 -right-24 w-64 h-64 bg-blue-50 rounded-full opacity-50"></div>
+                        
+                        <!-- Quiz Start Screen (ICE) -->
+                        <div id="quiz-start-screen-ch2" class="text-center my-auto relative z-10">
+                            <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner transform -rotate-6">
+                                <i class="fa-solid fa-bolt text-5xl"></i>
+                            </div>
+                            <h2 class="text-4xl font-black text-slate-800 mb-4 tracking-tight">IC Engine Technical Quiz</h2>
+                            <p class="text-slate-500 mb-10 max-w-md mx-auto font-medium leading-relaxed">Prepare for your KJM442 assessment with these 10 core questions covering Otto, Diesel cycles, and ICE performance.</p>
+                            <button onclick="startQuiz('ch2')" class="bg-blue-600 text-white font-black px-12 py-5 rounded-2xl shadow-xl hover:bg-blue-700 transition-all transform hover:scale-105 uppercase tracking-widest text-sm flex items-center gap-3 mx-auto">
+                                Begin Assessment <i class="fa-solid fa-play text-xs"></i>
+                            </button>
+                        </div>
+
+                        <!-- Quiz Question Screen (ICE) -->
+                        <div id="quiz-question-screen-ch2" class="hidden flex flex-col h-full relative z-10">
+                            <div class="flex justify-between items-center mb-10">
+                                <div>
+                                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] block mb-1">Session Progress</span>
+                                    <h4 class="text-xl font-bold text-slate-800" id="quiz-progress-text-ch2">Question 1 of 10</h4>
+                                </div>
+                                <div class="flex gap-1.5" id="quiz-dots-ch2" style="display: flex; gap: 6px;"></div>
+                            </div>
+                            
+                            <div class="mb-8">
+                                <h3 id="quiz-question-text-ch2" class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-10 leading-tight"></h3>
+                                <div id="quiz-options-container-ch2" class="grid grid-cols-1 gap-4"></div>
+                            </div>
+
+                            <div class="mt-auto pt-8 flex justify-between items-center border-t border-slate-100">
+                                <span class="text-xs font-bold text-slate-400 italic" id="quiz-feedback-ch2">Select the most accurate answer.</span>
+                                <button id="quiz-next-btn-ch2" onclick="handleNextQuestionCh2()" disabled class="bg-slate-200 text-slate-400 font-black px-10 py-4 rounded-2xl transition-all cursor-not-allowed uppercase tracking-widest text-xs flex items-center gap-2">
+                                    Next Step <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Result Screen (ICE) -->
+                        <div id="quiz-result-screen-ch2" class="hidden text-center my-auto relative z-10">
+                            <div id="result-icon-container-ch2" class="w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                                <i id="result-icon-ch2" class="fa-solid fa-trophy text-6xl"></i>
+                            </div>
+                            <h2 class="text-4xl font-black text-slate-800 mb-2" id="result-title-ch2">Quiz Completed!</h2>
+                            <p class="text-slate-500 mb-8 font-medium" id="result-message-ch2">Analyzing your ICE engineering knowledge...</p>
+                            
+                            <div class="inline-block px-10 py-6 bg-slate-50 rounded-3xl mb-12 border border-slate-100">
+                                <span class="text-xs font-black text-slate-400 uppercase tracking-widest block mb-2">Final Score</span>
+                                <div class="text-7xl font-black text-blue-600 tracking-tighter" id="quiz-final-score-ch2">0/10</div>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                                <button onclick="resetQuizCh2()" class="bg-slate-900 text-white font-black px-12 py-5 rounded-2xl shadow-xl hover:bg-slate-800 transition-all uppercase tracking-widest text-xs">
+                                    Try Again
+                                </button>
+                                <button onclick="showSection('notes')" class="bg-white text-blue-600 border-2 border-blue-600 font-black px-12 py-5 rounded-2xl transition-all uppercase tracking-widest text-xs">
+                                    Review Notes
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Fluid Mechanics Exercises</h2>
-                    <p class="text-slate-500 font-medium max-w-md mx-auto">Quizzes and AI Tutor specifically tuned for Chapter 2 are on the way.</p>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
+        // --- GLOBAL VARIABLES ---
         let currentGeo = 'flat';
         let labChart = null;
+        let iceCycleType = 'otto';
+        let iceIsRunning = true;
+        let iceRpm = 1000;
+        let iceR = 8.0;
+        let iceRc = 2.0;
+        let crankAngle = 0;
+        let iceChart = null;
+        let iceAnimationId = null;
         
         const materialData = [
             { name: 'Brick', k: 0.72, color: 0xef4444 },
@@ -636,14 +986,33 @@
             { q: "The mechanism of heat transfer involving actual bulk motion of matter is:", options: ["Conduction", "Convection", "Radiation", "Absorption"], answer: 1 }
         ];
 
+        // --- CHAPTER 2 EXERCISE (ICE QUIZ DATA - UPDATED TO ENGLISH) ---
+        const quizQuestionsCh2 = [
+            { q: "The high temperature at the end of the compression process in a Diesel cycle is achieved by heating:", options: ["Air only", "Fuel-air mixture", "Fuel injector", "Spark plug"], answer: 0 },
+            { q: "Which of the following describes the ideal Otto cycle?", options: ["Constant volume cycle", "Constant pressure cycle", "Dual-pressure cycle", "Constant temperature cycle"], answer: 0 },
+            { q: "In an internal combustion engine (ICE), the power stroke occurs after which process?", options: ["Exhaust", "Intake", "Compression", "Heat rejection"], answer: 2 },
+            { q: "The compression ratio of a gasoline engine is typically in the range of:", options: ["12 to 22", "6 to 12", "15 to 25", "2 to 5"], answer: 1 },
+            { q: "The main advantage of the Diesel cycle compared to the Otto cycle at full load is:", options: ["Higher rotational speed", "Higher compression ratio and high efficiency", "Lower exhaust temperature", "Optimized spark plug usage"], answer: 1 },
+            { q: "Heat rejection in the ideal Otto and Diesel cycles occurs at:", options: ["Constant pressure", "Constant volume", "Constant temperature", "Constant entropy"], answer: 1 },
+            { q: "The cutoff ratio (rc) in a Diesel cycle is defined as the volume ratio at:", options: ["Beginning of combustion to end of combustion", "End of combustion to beginning of combustion", "Beginning of compression to end of compression", "TDC to BDC"], answer: 1 },
+            { q: "If the compression ratio (r) increases, the thermal efficiency of the ideal Otto cycle will:", options: ["Decrease", "Increase", "Remain the same", "Fluctuate randomly"], answer: 1 },
+            { q: "In the ideal Diesel cycle, heat addition occurs at:", options: ["Constant volume", "Constant temperature", "Constant pressure", "Constant entropy"], answer: 2 },
+            { q: "Fuel is injected directly into the cylinder of a Diesel engine at the end of the:", options: ["Intake stroke", "Power stroke", "Compression stroke", "Exhaust stroke"], answer: 2 }
+        ];
+
         let quizCurrentIndex = 0;
         let quizScore = 0;
         let quizSelectedAnswer = null;
+
+        let quizCurrentIndexCh2 = 0;
+        let quizScoreCh2 = 0;
+        let quizSelectedAnswerCh2 = null;
 
         let scene, camera, renderer, layersGroup;
         let isDragging = false;
         let previousPosition = { x: 0, y: 0 };
 
+        // --- 3D LAB (CH 1) ---
         function init3D() {
             const container = document.getElementById('three-container');
             if (!container) return;
@@ -738,6 +1107,297 @@
             });
         }
 
+        // --- CHAPTER 2 LAB (ICE) LOGIC ---
+        function switchIceCycle(type) {
+            iceCycleType = type;
+            const bO = document.getElementById('btn-cycle-otto');
+            const bD = document.getElementById('btn-cycle-diesel');
+            const cutoffContainer = document.getElementById('container-cutoff');
+            
+            if(type === 'otto') {
+                bO.className = "flex-1 md:flex-none px-6 py-2 text-xs font-bold bg-white shadow-sm transition-all uppercase";
+                bD.className = "flex-1 md:flex-none px-6 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all uppercase";
+                cutoffContainer.classList.add('hidden');
+                document.getElementById('ice-param-r').value = 8;
+            } else {
+                bD.className = "flex-1 md:flex-none px-6 py-2 text-xs font-bold bg-white shadow-sm transition-all uppercase";
+                bO.className = "flex-1 md:flex-none px-6 py-2 text-xs font-bold text-slate-500 rounded-lg transition-all uppercase";
+                cutoffContainer.classList.remove('hidden');
+                document.getElementById('ice-param-r').value = 16;
+            }
+            updateIceParams();
+        }
+
+        // --- CALCULATION LOGIC & GRAPHIC SCALING ---
+        function updateIceParams() {
+            iceR = parseFloat(document.getElementById('ice-param-r').value);
+            iceRc = parseFloat(document.getElementById('ice-param-rc').value);
+            iceRpm = parseFloat(document.getElementById('ice-param-rpm').value);
+            
+            document.getElementById('label-ice-r').innerText = iceR.toFixed(1);
+            document.getElementById('label-ice-rc').innerText = iceRc.toFixed(1);
+            document.getElementById('label-ice-rpm').innerText = iceRpm;
+
+            calculateEfficiency();
+        }
+
+        function calculateEfficiency() {
+            const k = 1.4; // Air specific heat ratio
+            let efficiency = 0;
+            if(iceCycleType === 'otto') {
+                efficiency = 1 - (1 / Math.pow(iceR, k - 1));
+            } else {
+                const term1 = 1 / Math.pow(iceR, k - 1);
+                const term2 = (Math.pow(iceRc, k) - 1) / (k * (iceRc - 1));
+                efficiency = 1 - (term1 * term2);
+            }
+            document.getElementById('ice-res-efficiency').innerText = (efficiency * 100).toFixed(1) + "%";
+            document.getElementById('ice-res-work').innerText = (efficiency * 100 * 2.5).toFixed(1) + " kJ";
+        }
+
+        function toggleIceEngine() {
+            iceIsRunning = !iceIsRunning;
+            const icon = document.getElementById('ice-play-icon');
+            const status = document.getElementById('ice-status-indicator');
+            if(iceIsRunning) {
+                icon.className = "fa-solid fa-pause text-xl";
+                status.innerText = "Engine Running";
+                status.className = "text-[9px] text-blue-600 font-bold uppercase tracking-widest italic";
+            } else {
+                icon.className = "fa-solid fa-play text-xl";
+                status.innerText = "Engine Stopped";
+                status.className = "text-[9px] text-slate-400 font-bold uppercase tracking-widest italic";
+            }
+        }
+
+        function initIcePiston() {
+            const canvas = document.getElementById('icePistonCanvas');
+            const container = document.getElementById('ice-canvas-container');
+            if(!canvas || !container) return;
+            
+            const resize = () => {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            };
+            window.addEventListener('resize', resize);
+            resize();
+
+            const ctx = canvas.getContext('2d');
+            
+            function draw() {
+                if(iceIsRunning) {
+                    crankAngle += (iceRpm / 60) * 1.0; 
+                    if(crankAngle >= 720) crankAngle = 0;
+                }
+                
+                document.getElementById('ice-crank-angle').innerText = Math.floor(crankAngle) + "°";
+                
+                // Determine Stroke
+                let stroke = "";
+                let color = "#3b82f6";
+                if(crankAngle < 180) { stroke = "Intake"; color = "#3b82f6"; }
+                else if(crankAngle < 360) { stroke = "Compression"; color = "#64748b"; }
+                else if(crankAngle < 540) { stroke = "Power"; color = "#ef4444"; }
+                else { stroke = "Exhaust"; color = "#94a3b8"; }
+                
+                document.getElementById('ice-res-stroke').innerText = stroke;
+                document.getElementById('ice-res-stroke').style.backgroundColor = color;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2 + 50;
+                const crankRadius = 40;
+                const rodLength = 120;
+                
+                const rad = (crankAngle-90) * Math.PI / 180;
+                const crankX = centerX + crankRadius * Math.cos(rad);
+                const crankY = centerY + crankRadius * Math.sin(rad);
+                
+                // Piston Position logic
+                const pistonY = centerY - Math.sqrt(Math.pow(rodLength, 2) - Math.pow(crankRadius * Math.cos(rad), 2)) + crankRadius * Math.sin(rad);
+                
+                // Cylinder
+                ctx.strokeStyle = "#cbd5e1";
+                ctx.lineWidth = 4;
+                ctx.strokeRect(centerX - 50, centerY - 200, 100, 160);
+                
+                // Chamber Color based on stroke
+                if(stroke === "Power") {
+                    const gradient = ctx.createRadialGradient(centerX, centerY - 180, 5, centerX, centerY - 180, 50);
+                    gradient.addColorStop(0, "rgba(239, 68, 68, 0.8)");
+                    gradient.addColorStop(1, "transparent");
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(centerX - 48, centerY - 198, 96, (pistonY - (centerY - 200)));
+                } else if(stroke === "Intake") {
+                    ctx.fillStyle = "rgba(59, 130, 246, 0.1)";
+                    ctx.fillRect(centerX - 48, centerY - 198, 96, (pistonY - (centerY - 200)));
+                }
+
+                // Connecting Rod
+                ctx.beginPath();
+                ctx.moveTo(crankX, crankY);
+                ctx.lineTo(centerX, pistonY);
+                ctx.strokeStyle = "#94a3b8";
+                ctx.lineWidth = 8;
+                ctx.lineCap = "round";
+                ctx.stroke();
+
+                // Piston
+                ctx.fillStyle = "#475569";
+                ctx.beginPath();
+                ctx.roundRect(centerX - 45, pistonY - 20, 90, 40, 5);
+                ctx.fill();
+                
+                // Crankshaft
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, crankRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = "#e2e8f0";
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(crankX, crankY);
+                ctx.strokeStyle = "#334155";
+                ctx.lineWidth = 10;
+                ctx.stroke();
+
+                // Center pin
+                ctx.fillStyle = "#f97316";
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 8, 0, Math.PI*2);
+                ctx.fill();
+
+                updateIceChart();
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function initIcePvChart() {
+            const ctx = document.getElementById('icePvChart').getContext('2d');
+            iceChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Cycle Path',
+                            data: [],
+                            borderColor: '#3b82f6',
+                            borderWidth: 2,
+                            showLine: true,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Current Point',
+                            data: [{x: 0, y: 0}],
+                            backgroundColor: '#f97316',
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'Volume (v)', font: { size: 10, weight: 'bold' } }, 
+                            min: 0.5, 
+                            max: 10 
+                        },
+                        y: { 
+                            title: { display: true, text: 'Pressure (P)', font: { size: 10, weight: 'bold' } }, 
+                            min: 0, 
+                            max: 100 
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function updateIceChart() {
+            if(!iceChart) return;
+            
+            // Generate full cycle data based on params
+            const fullCyclePoints = [];
+            const r = iceR;
+            const rc = iceRc;
+            const k = 1.4;
+            const vMin = 1.0;
+            const vMax = r;
+            const p1 = 10;
+
+            // 1->2 (Compression)
+            for(let v = vMax; v >= vMin; v -= 0.5) {
+                fullCyclePoints.push({x: v, y: p1 * Math.pow(vMax/v, k)});
+            }
+            
+            if(iceCycleType === 'otto') {
+                // 2->3 (Const V Addition)
+                const p2 = p1 * Math.pow(r, k);
+                const p3 = p2 * 2.5; 
+                fullCyclePoints.push({x: vMin, y: p3});
+                // 3->4 (Expansion)
+                for(let v = vMin; v <= vMax; v += 0.5) {
+                    fullCyclePoints.push({x: v, y: p3 * Math.pow(vMin/v, k)});
+                }
+            } else {
+                // 2->3 (Const P Addition)
+                const p2 = p1 * Math.pow(r, k);
+                const v3 = vMin * rc;
+                fullCyclePoints.push({x: v3, y: p2});
+                // 3->4 (Expansion)
+                for(let v = v3; v <= vMax; v += 0.5) {
+                    fullCyclePoints.push({x: v, y: p2 * Math.pow(v3/v, k)});
+                }
+            }
+            // 4->1 (Const V Rejection)
+            fullCyclePoints.push({x: vMax, y: p1});
+
+            // --- AUTO-SCALING LOGIC (MENCARI SKALA MAKSIMUM SECARA DINAMIK) ---
+            let maxP_val = 100;
+            fullCyclePoints.forEach(pt => {
+                if (pt.y > maxP_val) maxP_val = pt.y;
+            });
+
+            // Laraskan had maksimum paksi-X dan paksi-Y supaya graf tidak terpotong
+            iceChart.options.scales.x.max = Math.ceil(vMax + 1.0);
+            iceChart.options.scales.y.max = Math.ceil(maxP_val * 1.15); // Tambah 15% padding di bahagian atas graf
+
+            iceChart.data.datasets[0].data = fullCyclePoints;
+            
+            // Current Dot Position Logic
+            let currentX = vMax;
+            let currentY = p1;
+            const normalizedAngle = (crankAngle % 360);
+            
+            if(normalizedAngle <= 180) { // Compression
+                const v = vMax - (vMax - vMin) * (normalizedAngle/180);
+                currentX = v;
+                currentY = p1 * Math.pow(vMax/v, k);
+            } else { // Expansion
+                const v = vMin + (vMax - vMin) * ((normalizedAngle-180)/180);
+                currentX = v;
+                const pTop = p1 * Math.pow(r, k) * (iceCycleType === 'otto' ? 2.5 : 1);
+                if(iceCycleType === 'otto') {
+                    currentY = pTop * Math.pow(vMin/v, k);
+                } else {
+                    const v3 = vMin * rc;
+                    if(v <= v3) currentY = p1 * Math.pow(r, k);
+                    else currentY = (p1 * Math.pow(r, k)) * Math.pow(v3/v, k);
+                }
+            }
+
+            iceChart.data.datasets[1].data = [{x: currentX, y: currentY}];
+            iceChart.update();
+        }
+
+        // --- UTILITY UI FUNCTIONS ---
         function showNoteTab(tabId) {
             document.querySelectorAll('.note-tab-content').forEach(content => content.classList.add('hidden'));
             document.getElementById('note-' + tabId).classList.remove('hidden');
@@ -746,6 +1406,17 @@
                 btn.classList.add('text-slate-500');
             });
             document.getElementById('tab-btn-' + tabId).classList.add('note-tab-active');
+        }
+
+        // --- ICE NOTES TABS (Otto, Diesel, Intro) ---
+        function showIceTab(tabId) {
+            document.querySelectorAll('.ice-tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById('note-ice-' + tabId).classList.remove('hidden');
+            document.querySelectorAll('[id^="ice-tab-"]').forEach(btn => {
+                btn.classList.remove('note-tab-active');
+                btn.classList.add('text-slate-500');
+            });
+            document.getElementById('ice-tab-' + tabId).classList.add('note-tab-active');
         }
 
         function showSection(id) {
@@ -762,8 +1433,16 @@
 
             if(id === 'lab') {
                 setTimeout(() => {
-                    if(!renderer) init3D();
-                    runSim();
+                    // Check if current chapter is 2 to init ICE lab
+                    const isCh2 = !document.querySelector('.ch2-content').classList.contains('hidden');
+                    if(isCh2) {
+                        initIcePiston();
+                        initIcePvChart();
+                        updateIceParams();
+                    } else {
+                        if(!renderer) init3D();
+                        runSim();
+                    }
                 }, 100);
             }
         }
@@ -833,6 +1512,7 @@
 
         function renderLayers() {
             const container = document.getElementById('layers-container');
+            if(!container) return;
             container.innerHTML = layers.map((l, idx) => `
                 <div class="bg-white border rounded-2xl p-4 relative shadow-sm hover:shadow-md transition-shadow">
                     <button onclick="removeLayer(${l.id})" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors">
@@ -873,9 +1553,12 @@
             });
 
             const Q = (thot - tcold) / totalRt;
-            document.getElementById('res-rt').innerText = totalRt.toFixed(4);
-            document.getElementById('res-q').innerText = Math.abs(Q).toFixed(1);
-            document.getElementById('res-flux').innerText = (Math.abs(Q)/1.0).toFixed(1);
+            const resRt = document.getElementById('res-rt');
+            if(resRt) resRt.innerText = totalRt.toFixed(4);
+            const resQ = document.getElementById('res-q');
+            if(resQ) resQ.innerText = Math.abs(Q).toFixed(1);
+            const resFlux = document.getElementById('res-flux');
+            if(resFlux) resFlux.innerText = (Math.abs(Q)/1.0).toFixed(1);
 
             let lastT = thot;
             let lastR = 0.5;
@@ -893,7 +1576,9 @@
         }
 
         function updateChart(pos, temps) {
-            const ctx = document.getElementById('labChart').getContext('2d');
+            const chartCanvas = document.getElementById('labChart');
+            if(!chartCanvas) return;
+            const ctx = chartCanvas.getContext('2d');
             if(labChart) labChart.destroy();
             labChart = new Chart(ctx, {
                 type: 'line',
@@ -935,17 +1620,28 @@
             container.innerHTML = html;
         }
 
-        // --- QUIZ Logic ---
-        function startQuiz() {
-            quizCurrentIndex = 0;
-            quizScore = 0;
-            document.getElementById('quiz-start-screen').classList.add('hidden');
-            document.getElementById('quiz-result-screen').classList.add('hidden');
-            document.getElementById('quiz-question-screen').classList.remove('hidden');
-            renderQuizDots();
-            showQuestion();
+        // --- QUIZ FUNCTIONS (CHAPTER 1 & CHAPTER 2) ---
+        function startQuiz(chapter) {
+            if (chapter === 'ch2') {
+                quizCurrentIndexCh2 = 0;
+                quizScoreCh2 = 0;
+                document.getElementById('quiz-start-screen-ch2').classList.add('hidden');
+                document.getElementById('quiz-result-screen-ch2').classList.add('hidden');
+                document.getElementById('quiz-question-screen-ch2').classList.remove('hidden');
+                renderQuizDotsCh2();
+                showQuestionCh2();
+            } else {
+                quizCurrentIndex = 0;
+                quizScore = 0;
+                document.getElementById('quiz-start-screen').classList.add('hidden');
+                document.getElementById('quiz-result-screen').classList.add('hidden');
+                document.getElementById('quiz-question-screen').classList.remove('hidden');
+                renderQuizDots();
+                showQuestion();
+            }
         }
 
+        // --- CH1 Dots & Quiz ---
         function renderQuizDots() {
             const dotsContainer = document.getElementById('quiz-dots');
             dotsContainer.innerHTML = quizQuestions.map((_, i) => `
@@ -1048,7 +1744,113 @@
         }
 
         function resetQuiz() {
-            startQuiz();
+            startQuiz('ch1');
+        }
+
+        // --- CH2 Dots & Quiz (UPDATED INTERACTIVE LABELS & FEEDBACKS TO ENGLISH) ---
+        function renderQuizDotsCh2() {
+            const dotsContainer = document.getElementById('quiz-dots-ch2');
+            dotsContainer.innerHTML = quizQuestionsCh2.map((_, i) => `
+                <div class="w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-blue-600 w-4' : 'bg-slate-200'}"></div>
+            `).join('');
+        }
+
+        function updateQuizDotsCh2() {
+            const dots = document.querySelectorAll('#quiz-dots-ch2 div');
+            dots.forEach((dot, i) => {
+                if(i === quizCurrentIndexCh2) {
+                    dot.className = "w-4 h-2 rounded-full bg-blue-600 transition-all duration-300";
+                } else if (i < quizCurrentIndexCh2) {
+                    dot.className = "w-2 h-2 rounded-full bg-emerald-400 transition-all duration-300";
+                } else {
+                    dot.className = "w-2 h-2 rounded-full bg-slate-200 transition-all duration-300";
+                }
+            });
+        }
+
+        function showQuestionCh2() {
+            const q = quizQuestionsCh2[quizCurrentIndexCh2];
+            quizSelectedAnswerCh2 = null;
+            document.getElementById('quiz-progress-text-ch2').innerText = `Question ${quizCurrentIndexCh2 + 1} of ${quizQuestionsCh2.length}`;
+            document.getElementById('quiz-question-text-ch2').innerText = q.q;
+            document.getElementById('quiz-feedback-ch2').innerText = "Select the most accurate answer.";
+            document.getElementById('quiz-feedback-ch2').className = "text-xs font-bold text-slate-400 italic";
+            
+            const optionsContainer = document.getElementById('quiz-options-container-ch2');
+            optionsContainer.innerHTML = q.options.map((opt, i) => `
+                <button onclick="selectQuizOptionCh2(${i})" class="quiz-option w-full p-5 rounded-2xl text-left font-bold text-slate-700 bg-white flex items-center gap-5 shadow-sm border-2 border-slate-100">
+                    <div class="w-10 h-10 min-w-[40px] rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 text-sm">${String.fromCharCode(65 + i)}</div>
+                    <span class="text-sm md:text-base">${opt}</span>
+                </button>
+            `).join('');
+
+            const nextBtn = document.getElementById('quiz-next-btn-ch2');
+            nextBtn.disabled = true;
+            nextBtn.className = "bg-slate-200 text-slate-400 font-black px-10 py-4 rounded-2xl transition-all cursor-not-allowed uppercase tracking-widest text-xs flex items-center gap-2";
+            updateQuizDotsCh2();
+        }
+
+        function selectQuizOptionCh2(index) {
+            quizSelectedAnswerCh2 = index;
+            document.querySelectorAll('#quiz-options-container-ch2 .quiz-option').forEach((opt, i) => {
+                if(i === index) {
+                    opt.className = "quiz-option selected w-full p-5 rounded-2xl text-left font-bold text-blue-700 bg-blue-50 flex items-center gap-5 shadow-md border-2 border-blue-500";
+                    opt.querySelector('div').className = "w-10 h-10 min-w-[40px] rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm";
+                } else {
+                    opt.className = "quiz-option w-full p-5 rounded-2xl text-left font-bold text-slate-700 bg-white flex items-center gap-5 shadow-sm border-2 border-slate-100";
+                    opt.querySelector('div').className = "w-10 h-10 min-w-[40px] rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 text-sm";
+                }
+            });
+            const nextBtn = document.getElementById('quiz-next-btn-ch2');
+            nextBtn.disabled = false;
+            nextBtn.className = "bg-blue-600 text-white font-black px-10 py-4 rounded-2xl shadow-xl transform hover:scale-105 transition-all uppercase tracking-widest text-xs flex items-center gap-2";
+            
+            document.getElementById('quiz-feedback-ch2').innerText = "Choice confirmed. Ready to proceed?";
+            document.getElementById('quiz-feedback-ch2').className = "text-xs font-bold text-blue-500 italic";
+        }
+
+        function handleNextQuestionCh2() {
+            if(quizSelectedAnswerCh2 === quizQuestionsCh2[quizCurrentIndexCh2].answer) quizScoreCh2++;
+            if(quizCurrentIndexCh2 < quizQuestionsCh2.length - 1) {
+                quizCurrentIndexCh2++;
+                showQuestionCh2();
+            } else {
+                showQuizResultsCh2();
+            }
+        }
+
+        function showQuizResultsCh2() {
+            document.getElementById('quiz-question-screen-ch2').classList.add('hidden');
+            document.getElementById('quiz-result-screen-ch2').classList.remove('hidden');
+            
+            const scorePercent = (quizScoreCh2 / quizQuestionsCh2.length) * 100;
+            const iconContainer = document.getElementById('result-icon-container-ch2');
+            const icon = document.getElementById('result-icon-ch2');
+            const title = document.getElementById('result-title-ch2');
+            const message = document.getElementById('result-message-ch2');
+            
+            if (scorePercent >= 80) {
+                iconContainer.className = "w-32 h-32 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
+                icon.className = "fa-solid fa-trophy text-6xl";
+                title.innerText = "Congratulations! Excellent!";
+                message.innerText = "You have a solid grasp of internal combustion engine cycles.";
+            } else if (scorePercent >= 50) {
+                iconContainer.className = "w-32 h-32 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
+                icon.className = "fa-solid fa-star text-6xl";
+                title.innerText = "Good Effort!";
+                message.innerText = "Your basic understanding is good, but some subtopics need further review.";
+            } else {
+                iconContainer.className = "w-32 h-32 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl";
+                icon.className = "fa-solid fa-book-open-reader text-6xl";
+                title.innerText = "Keep Learning!";
+                message.innerText = "Please review the Otto & Diesel cycle engine notes to strengthen your theory.";
+            }
+            
+            document.getElementById('quiz-final-score-ch2').innerText = `${quizScoreCh2}/${quizQuestionsCh2.length}`;
+        }
+
+        function resetQuizCh2() {
+            startQuiz('ch2');
         }
 
         // --- CHAPTER SWITCHER ---
@@ -1067,10 +1869,18 @@
             document.querySelectorAll('.chapter-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll(`.ch${chap}-content`).forEach(el => el.classList.remove('hidden'));
             
-            // Re-render 3D and charts if switching back to chapter 1
-            if(chap === 1) {
+            // Re-render 3D and charts if switching back to chapter 1 lab section
+            const isLabActive = !document.getElementById('section-lab').classList.contains('hidden');
+            if(chap === 1 && isLabActive) {
                 setTimeout(() => {
+                    if(!renderer) init3D();
                     runSim();
+                }, 50);
+            } else if (chap === 2 && isLabActive) {
+                setTimeout(() => {
+                    initIcePiston();
+                    initIcePvChart();
+                    updateIceParams();
                 }, 50);
             }
         }
